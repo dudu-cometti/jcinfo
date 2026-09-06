@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getSiteSettings } from '@/lib/data/settings'
 
 const NAV_ITEMS = [
@@ -14,8 +15,8 @@ export default async function PublicLayout({ children }: { children: React.React
     <div className="flex min-h-screen flex-col bg-neutral-50">
       <header className="sticky top-0 z-10 border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" className="text-lg font-semibold text-neutral-900">
-            {settings.site_name}
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.jpg" alt={settings.site_name} width={170} height={50} priority className="h-10 w-auto" />
           </Link>
           <nav className="flex items-center gap-6">
             {NAV_ITEMS.map((item) => (
