@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 export default async function HomePage() {
   const supabase = await createClient()
 
-  const [{ data: featuredProducts }, { data: categories }, { data: campaigns }] = await Promise.all([
+  const [{ data: featuredProducts }, { data: categories }, { data: brands }, { data: campaigns }] = await Promise.all([
     supabase
       .from('products')
       .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
@@ -15,6 +15,7 @@ export default async function HomePage() {
       .order('created_at', { ascending: false })
       .limit(8),
     supabase.from('categories').select('id, name, slug').order('name').limit(12),
+    supabase.from('brands').select('id, name, slug').order('name').limit(12),
     supabase
       .from('point_campaigns')
       .select('id, name, description, min_points')
@@ -88,6 +89,23 @@ export default async function HomePage() {
                 className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/30 hover:bg-brand-navy/5 hover:text-brand-navy"
               >
                 {category.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {brands && brands.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-neutral-900">Marcas</h2>
+          <div className="flex flex-wrap gap-2">
+            {brands.map((brand) => (
+              <Link
+                key={brand.id}
+                href={`/marca/${brand.slug}`}
+                className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/30 hover:bg-brand-navy/5 hover:text-brand-navy"
+              >
+                {brand.name}
               </Link>
             ))}
           </div>

@@ -6,6 +6,8 @@ export const metadata = { title: 'Relatórios' }
 const REPORTS = [
   { href: '/admin/relatorios/vendas', label: 'Vendas', description: 'Faturamento, ticket médio e exportação em CSV.' },
   { href: '/admin/relatorios/vendedores', label: 'Vendedores', description: 'Ranking de vendas e comissão por vendedor.' },
+  { href: '/admin/relatorios/lucro', label: 'Lucro', description: 'Faturamento, custo e margem por produto (só admin).' },
+  { href: '/admin/relatorios/giro-estoque', label: 'Giro de estoque', description: 'Produtos que mais saem e os parados/encalhados.' },
   { href: '/admin/produtos', label: 'Produtos', description: 'Catálogo, estoque e destaque.' },
   { href: '/admin/estoque', label: 'Estoque', description: 'Movimentações e alertas de estoque baixo.' },
   { href: '/admin/clientes', label: 'Clientes', description: 'Base de clientes cadastrados.' },

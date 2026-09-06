@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { href: '/admin/dashboard', label: 'Dashboard' },
   { href: '/admin/produtos', label: 'Produtos' },
   { href: '/admin/categorias', label: 'Categorias' },
+  { href: '/admin/marcas', label: 'Marcas' },
   { href: '/admin/estoque', label: 'Estoque' },
   { href: '/admin/vendas', label: 'Vendas' },
   { href: '/admin/clientes', label: 'Clientes' },

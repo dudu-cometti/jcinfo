@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { Field, Input } from '@/components/ui/input'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { Button } from '@/components/ui/button'
 import { createLead } from '@/lib/actions/leads'
 
@@ -111,13 +112,7 @@ export function WhatsAppButton({
                 />
               </Field>
               <Field label="Telefone" htmlFor="lead-phone">
-                <Input
-                  id="lead-phone"
-                  required
-                  placeholder="(11) 99999-9999"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
+                <PhoneInput id="lead-phone" required value={phone} onChange={setPhone} />
               </Field>
 
               {error && <p className="text-sm text-red-600">{error}</p>}

@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input, Textarea, Label } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { formatBRL } from '@/lib/utils'
@@ -61,7 +62,7 @@ export function SaleBuilder() {
     'products',
   )
   const [cart, setCart] = useState<CartLine[]>([])
-  const [discount, setDiscount] = useState('0')
+  const [discount, setDiscount] = useState(0)
   const [notes, setNotes] = useState('')
 
   function addToCart(product: Product) {
@@ -87,10 +88,9 @@ export function SaleBuilder() {
     setCart((prev) => prev.filter((line) => line.product.id !== productId))
   }
 
-  const discountValue = Number(discount) || 0
   const { subtotal, total } = computeCartTotals(
     cart.map((line) => ({ price: line.product.price, promoPrice: line.product.promo_price, quantity: line.quantity })),
-    discountValue,
+    discount,
   )
 
   function handleSubmit() {
@@ -107,7 +107,7 @@ export function SaleBuilder() {
       const result = await createSale(
         customer.id,
         cart.map((line) => ({ product_id: line.product.id, quantity: line.quantity })),
-        discountValue,
+        discount,
         notes,
       )
       if (result?.error) {
@@ -263,14 +263,7 @@ export function SaleBuilder() {
         <h2 className="text-sm font-semibold text-neutral-900">Resumo</h2>
         <div>
           <Label htmlFor="discount">Desconto (R$)</Label>
-          <Input
-            id="discount"
-            type="number"
-            min={0}
-            step="0.01"
-            value={discount}
-            onChange={(e) => setDiscount(e.target.value)}
-          />
+          <CurrencyInput id="discount" value={discount} onValueChange={setDiscount} />
         </div>
         <div>
           <Label htmlFor="notes">Observações</Label>
@@ -284,7 +277,7 @@ export function SaleBuilder() {
           </div>
           <div className="flex justify-between text-neutral-500">
             <span>Desconto</span>
-            <span>-{formatBRL(discountValue)}</span>
+            <span>-{formatBRL(discount)}</span>
           </div>
           <div className="flex justify-between text-base font-semibold text-neutral-900">
             <span>Total</span>

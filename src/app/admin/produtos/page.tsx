@@ -20,25 +20,30 @@ export default async function AdminProdutosPage({
   const params = await searchParams
   const q = firstParam(params.q) ?? ''
   const status = firstParam(params.status) ?? ''
+  const brandId = firstParam(params.marca) ?? ''
   const page = Number(firstParam(params.page) ?? '1') || 1
 
   const supabase = await createClient()
 
   let query = supabase
     .from('products')
-    .select('id, name, slug, sku, price, promo_price, stock, min_stock, status, featured, category:categories(name)', {
-      count: 'exact',
-    })
+    .select(
+      'id, name, slug, sku, price, promo_price, stock, min_stock, status, featured, category:categories(name), brand:brands(name)',
+      { count: 'exact' },
+    )
     .order('created_at', { ascending: false })
     .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
 
   if (q) {
     query = query.or(
-      `name.ilike.%${q}%,sku.ilike.%${q}%,brand.ilike.%${q}%,model.ilike.%${q}%,internal_code.ilike.%${q}%`,
+      `name.ilike.%${q}%,sku.ilike.%${q}%,model.ilike.%${q}%,internal_code.ilike.%${q}%`,
     )
   }
   if (status === 'ativo' || status === 'inativo') {
     query = query.eq('status', status)
+  }
+  if (brandId) {
+    query = query.eq('brand_id', brandId)
   }
   if (status === 'baixo_estoque') {
     // stock <= min_stock can't be filtered server-side via PostgREST (two-column
@@ -57,9 +62,13 @@ export default async function AdminProdutosPage({
     status: 'ativo' | 'inativo'
     featured: boolean
     category: { name: string } | null
+    brand: { name: string } | null
   }
 
-  const { data, count } = await query
+  const [{ data, count }, { data: brands }] = await Promise.all([
+    query,
+    supabase.from('brands').select('id, name').order('name'),
+  ])
   const products = (data ?? []) as unknown as ProductRow[]
   const visibleProducts = status === 'baixo_estoque' ? products.filter((p) => p.stock <= p.min_stock) : products
 
@@ -78,7 +87,7 @@ export default async function AdminProdutosPage({
         <Input
           name="q"
           defaultValue={q}
-          placeholder="Buscar por nome, SKU, marca, modelo..."
+          placeholder="Buscar por nome, SKU, modelo..."
           className="max-w-sm"
         />
         <Select name="status" defaultValue={status} className="max-w-[200px]">
@@ -86,6 +95,14 @@ export default async function AdminProdutosPage({
           <option value="ativo">Ativos</option>
           <option value="inativo">Inativos</option>
           <option value="baixo_estoque">Estoque baixo</option>
+        </Select>
+        <Select name="marca" defaultValue={brandId} className="max-w-[200px]">
+          <option value="">Todas as marcas</option>
+          {(brands ?? []).map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
         </Select>
         <Button type="submit" variant="secondary">
           Filtrar
@@ -96,6 +113,7 @@ export default async function AdminProdutosPage({
         <Thead>
           <Th>Produto</Th>
           <Th>Categoria</Th>
+          <Th>Marca</Th>
           <Th>Preço</Th>
           <Th>Estoque</Th>
           <Th>Status</Th>
@@ -112,6 +130,7 @@ export default async function AdminProdutosPage({
                   {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
                 </Td>
                 <Td>{product.category?.name ?? '—'}</Td>
+                <Td>{product.brand?.name ?? '—'}</Td>
                 <Td>
                   {product.promo_price ? (
                     <div>
@@ -151,7 +170,7 @@ export default async function AdminProdutosPage({
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
-              href={`/admin/produtos?${new URLSearchParams({ q, status, page: String(p) }).toString()}`}
+              href={`/admin/produtos?${new URLSearchParams({ q, status, marca: brandId, page: String(p) }).toString()}`}
               className={`rounded-md px-3 py-1 ${p === page ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'}`}
             >
               {p}

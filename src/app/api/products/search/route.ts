@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { data } = await supabase
     .from('products')
-    .select('id, name, sku, brand, model, price, promo_price, stock')
+    .select('id, name, sku, model, price, promo_price, stock')
     .eq('status', 'ativo')
-    .or(`name.ilike.%${q}%,sku.ilike.%${q}%,brand.ilike.%${q}%,model.ilike.%${q}%`)
+    .or(`name.ilike.%${q}%,sku.ilike.%${q}%,model.ilike.%${q}%`)
     .limit(10)
 
   return NextResponse.json({ products: data ?? [] })

@@ -19,11 +19,13 @@ export default async function ProdutosPage({ searchParams }: PageProps<'/produto
   const params = await searchParams
   const q = firstParam(params.q) ?? ''
   const categoryId = firstParam(params.categoria) ?? ''
+  const brandId = firstParam(params.marca) ?? ''
   const page = Number(firstParam(params.page) ?? '1') || 1
 
   const supabase = await createClient()
-  const [{ data: categories }, productsResult] = await Promise.all([
+  const [{ data: categories }, { data: brands }, productsResult] = await Promise.all([
     supabase.from('categories').select('id, name').order('name'),
+    supabase.from('brands').select('id, name').order('name'),
     (async () => {
       let query = supabase
         .from('products')
@@ -36,6 +38,7 @@ export default async function ProdutosPage({ searchParams }: PageProps<'/produto
 
       if (q) query = query.ilike('name', `%${q}%`)
       if (categoryId) query = query.eq('category_id', categoryId)
+      if (brandId) query = query.eq('brand_id', brandId)
 
       return query
     })(),
@@ -62,6 +65,14 @@ export default async function ProdutosPage({ searchParams }: PageProps<'/produto
             </option>
           ))}
         </Select>
+        <Select name="marca" defaultValue={brandId} className="max-w-[220px]">
+          <option value="">Todas as marcas</option>
+          {(brands ?? []).map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+        </Select>
         <Button type="submit" variant="secondary">
           Filtrar
         </Button>
@@ -82,7 +93,7 @@ export default async function ProdutosPage({ searchParams }: PageProps<'/produto
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <a
               key={p}
-              href={`/produtos?${new URLSearchParams({ q, categoria: categoryId, page: String(p) }).toString()}`}
+              href={`/produtos?${new URLSearchParams({ q, categoria: categoryId, marca: brandId, page: String(p) }).toString()}`}
               className={`rounded-md px-3 py-1 ${p === page ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'}`}
             >
               {p}

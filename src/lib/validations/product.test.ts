@@ -6,7 +6,7 @@ const base = {
   slug: 'iphone-15',
   description: '',
   category_id: '',
-  brand: '',
+  brand_id: '',
   model: '',
   price: '2000',
   promo_price: '',

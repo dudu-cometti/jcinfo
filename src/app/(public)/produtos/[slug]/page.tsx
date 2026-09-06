@@ -13,7 +13,7 @@ async function getProduct(slug: string) {
   const { data: product } = await supabase
     .from('products')
     .select(
-      'id, name, slug, description, brand, model, price, promo_price, stock, status, category:categories(name, slug), images:product_images(url, position)',
+      'id, name, slug, description, model, price, promo_price, stock, status, category:categories(name, slug), brand:brands(name, slug), images:product_images(url, position)',
     )
     .eq('slug', slug)
     .eq('status', 'ativo')
@@ -61,6 +61,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
     .slice()
     .sort((a, b) => a.position - b.position)
   const category = product.category as unknown as { name: string; slug: string } | null
+  const brand = product.brand as unknown as { name: string; slug: string } | null
   const estimatedPoints = Math.floor(product.promo_price ?? product.price)
 
   const jsonLd = {
@@ -68,7 +69,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
     '@type': 'Product',
     name: product.name,
     description: product.description ?? undefined,
-    brand: product.brand ?? undefined,
+    brand: brand ? { '@type': 'Brand', name: brand.name } : undefined,
     image: images.map((i) => i.url),
     offers: {
       '@type': 'Offer',
@@ -121,9 +122,15 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
           <div>
             {category && <p className="text-sm text-neutral-500">{category.name}</p>}
             <h1 className="text-2xl font-semibold text-neutral-900">{product.name}</h1>
-            {(product.brand || product.model) && (
+            {(brand || product.model) && (
               <p className="text-sm text-neutral-500">
-                {[product.brand, product.model].filter(Boolean).join(' · ')}
+                {brand ? (
+                  <Link href={`/marca/${brand.slug}`} className="hover:underline">
+                    {brand.name}
+                  </Link>
+                ) : null}
+                {brand && product.model ? ' · ' : null}
+                {product.model}
               </p>
             )}
           </div>

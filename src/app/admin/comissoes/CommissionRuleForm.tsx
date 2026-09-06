@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import { Field, Input, Textarea, Select } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Button } from '@/components/ui/button'
 import type { CommissionRuleFormState } from '@/lib/validations/commission-rule'
 
@@ -36,7 +37,7 @@ export function CommissionRuleForm({
           <Input id="percentage" name="percentage" type="number" step="0.01" min="0" max="100" defaultValue={defaultValues?.percentage ?? ''} />
         </Field>
         <Field label="Valor fixo (R$)" htmlFor="fixed_value">
-          <Input id="fixed_value" name="fixed_value" type="number" step="0.01" min="0" defaultValue={defaultValues?.fixed_value ?? ''} />
+          <CurrencyInput id="fixed_value" name="fixed_value" defaultValue={defaultValues?.fixed_value} />
         </Field>
       </div>
       <Field label="Descrição" htmlFor="description">

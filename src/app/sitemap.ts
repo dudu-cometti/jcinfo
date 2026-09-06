@@ -6,9 +6,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
 
-  const [{ data: products }, { data: categories }] = await Promise.all([
+  const [{ data: products }, { data: categories }, { data: brands }] = await Promise.all([
     supabase.from('products').select('slug, updated_at').eq('status', 'ativo'),
     supabase.from('categories').select('slug, updated_at'),
+    supabase.from('brands').select('slug, updated_at'),
   ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -32,5 +33,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...productRoutes, ...categoryRoutes]
+  const brandRoutes: MetadataRoute.Sitemap = (brands ?? []).map((b) => ({
+    url: `${siteUrl}/marca/${b.slug}`,
+    lastModified: b.updated_at,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...productRoutes, ...categoryRoutes, ...brandRoutes]
 }

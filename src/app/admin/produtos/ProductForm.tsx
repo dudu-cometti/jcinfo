@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import { Field, Input, Textarea, Select, Checkbox, Label } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Button } from '@/components/ui/button'
 import { slugify } from '@/lib/utils'
 import type { ProductFormState } from '@/lib/validations/product'
@@ -13,7 +14,7 @@ type ProductDefaults = {
   slug: string
   description: string | null
   category_id: string | null
-  brand: string | null
+  brand_id: string | null
   model: string | null
   price: number
   promo_price: number | null
@@ -29,11 +30,13 @@ type ProductDefaults = {
 export function ProductForm({
   action,
   categories,
+  brands,
   defaultValues,
   submitLabel,
 }: {
   action: ProductFormAction
   categories: { id: string; name: string }[]
+  brands: { id: string; name: string }[]
   defaultValues?: ProductDefaults
   submitLabel: string
 }) {
@@ -85,8 +88,15 @@ export function ProductForm({
             ))}
           </Select>
         </Field>
-        <Field label="Marca" htmlFor="brand">
-          <Input id="brand" name="brand" defaultValue={defaultValues?.brand ?? ''} />
+        <Field label="Marca" htmlFor="brand_id">
+          <Select id="brand_id" name="brand_id" defaultValue={defaultValues?.brand_id ?? ''}>
+            <option value="">Sem marca</option>
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </Select>
         </Field>
         <Field label="Modelo" htmlFor="model">
           <Input id="model" name="model" defaultValue={defaultValues?.model ?? ''} />
@@ -95,20 +105,13 @@ export function ProductForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Field label="Preço" htmlFor="price">
-          <Input id="price" name="price" type="number" step="0.01" min="0" required defaultValue={defaultValues?.price} />
+          <CurrencyInput id="price" name="price" required defaultValue={defaultValues?.price} />
         </Field>
         <Field label="Preço promocional" htmlFor="promo_price" hint="Deixe em branco se não houver promoção">
-          <Input
-            id="promo_price"
-            name="promo_price"
-            type="number"
-            step="0.01"
-            min="0"
-            defaultValue={defaultValues?.promo_price ?? ''}
-          />
+          <CurrencyInput id="promo_price" name="promo_price" defaultValue={defaultValues?.promo_price} />
         </Field>
-        <Field label="Custo" htmlFor="cost" hint="Uso interno, não exibido publicamente">
-          <Input id="cost" name="cost" type="number" step="0.01" min="0" defaultValue={defaultValues?.cost ?? ''} />
+        <Field label="Custo" htmlFor="cost" hint="Uso interno — só o admin vê isso, não aparece na loja nem para vendedores">
+          <CurrencyInput id="cost" name="cost" defaultValue={defaultValues?.cost} />
         </Field>
       </div>
 

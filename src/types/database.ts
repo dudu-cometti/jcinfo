@@ -44,6 +44,17 @@ export type Database = {
         Insert: { id?: string; name: string; slug: string }
         Update: Partial<Database['public']['Tables']['categories']['Insert']>
       }
+      brands: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: { id?: string; name: string; slug: string }
+        Update: Partial<Database['public']['Tables']['brands']['Insert']>
+      }
       products: {
         Row: {
           id: string
@@ -51,7 +62,7 @@ export type Database = {
           slug: string
           description: string | null
           category_id: string | null
-          brand: string | null
+          brand_id: string | null
           model: string | null
           price: number
           promo_price: number | null
@@ -71,7 +82,7 @@ export type Database = {
           slug: string
           description?: string | null
           category_id?: string | null
-          brand?: string | null
+          brand_id?: string | null
           model?: string | null
           price: number
           promo_price?: number | null

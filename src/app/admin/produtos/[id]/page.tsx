@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ProductForm } from '../ProductForm'
@@ -11,10 +12,16 @@ export const metadata = { title: 'Editar produto' }
 export default async function EditProductPage({ params }: PageProps<'/admin/produtos/[id]'>) {
   const { id } = await params
   const supabase = await createClient()
+  // The regular (anon-key) client can no longer read `cost` at all — see
+  // migration 000016 — so this specific read goes through the service-role
+  // client, which bypasses column grants. This page is already fully
+  // gated by requireRole('admin') at the layout level.
+  const admin = createAdminClient()
 
-  const [{ data: product }, { data: categories }, { data: images }] = await Promise.all([
-    supabase.from('products').select('*').eq('id', id).single(),
+  const [{ data: product }, { data: categories }, { data: brands }, { data: images }] = await Promise.all([
+    admin.from('products').select('*').eq('id', id).single(),
     supabase.from('categories').select('id, name').order('name'),
+    supabase.from('brands').select('id, name').order('name'),
     supabase.from('product_images').select('id, url').eq('product_id', id).order('position'),
   ])
 
@@ -50,12 +57,13 @@ export default async function EditProductPage({ params }: PageProps<'/admin/prod
         <ProductForm
           action={updateProduct.bind(null, id)}
           categories={categories ?? []}
+          brands={brands ?? []}
           defaultValues={{
             name: product.name,
             slug: product.slug,
             description: product.description,
             category_id: product.category_id,
-            brand: product.brand,
+            brand_id: product.brand_id,
             model: product.model,
             price: product.price,
             promo_price: product.promo_price,

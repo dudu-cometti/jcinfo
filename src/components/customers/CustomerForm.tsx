@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import { Field, Input, Textarea } from '@/components/ui/input'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { Button } from '@/components/ui/button'
 import type { CustomerFormState } from '@/lib/validations/customer'
 
@@ -30,7 +31,7 @@ export function CustomerForm({
         <Input id="name" name="name" required defaultValue={defaultValues?.name} />
       </Field>
       <Field label="Telefone" htmlFor="phone" hint="Usado para identificar o cliente e evitar duplicidade">
-        <Input id="phone" name="phone" required placeholder="(11) 99999-9999" defaultValue={defaultValues?.phone} />
+        <PhoneInput id="phone" name="phone" required defaultValue={defaultValues?.phone} />
       </Field>
       <Field label="E-mail" htmlFor="email">
         <Input id="email" name="email" type="email" defaultValue={defaultValues?.email ?? ''} />
