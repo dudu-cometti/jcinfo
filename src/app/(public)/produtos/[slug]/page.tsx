@@ -132,7 +132,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
             {product.promo_price ? (
               <div>
                 <p className="text-sm text-neutral-400 line-through">De {formatBRL(product.price)}</p>
-                <p className="text-3xl font-semibold text-neutral-900">Por {formatBRL(product.promo_price)}</p>
+                <p className="text-3xl font-semibold text-brand-navy">Por {formatBRL(product.promo_price)}</p>
               </div>
             ) : (
               <p className="text-3xl font-semibold text-neutral-900">{formatBRL(product.price)}</p>
@@ -156,15 +156,15 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
           />
 
           {activeCampaigns.length > 0 && (
-            <div className="space-y-2 rounded-xl border border-blue-100 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-blue-900">
+            <div className="space-y-2 rounded-xl border border-brand-cyan/20 bg-brand-cyan/10 p-4">
+              <p className="text-sm font-medium text-brand-navy">
                 Compre este produto e acumule pontos! Esta compra pode gerar até{' '}
                 <strong>{estimatedPoints.toLocaleString('pt-BR')}</strong> pontos.
               </p>
               {activeCampaigns.map((campaign) => {
                 const rewardNames = campaign.campaign_rewards.map((cr) => cr.reward?.name).filter(Boolean)
                 return (
-                  <p key={campaign.id} className="text-sm text-blue-700">
+                  <p key={campaign.id} className="text-sm text-brand-teal">
                     Junte {campaign.min_points.toLocaleString('pt-BR')} pontos e concorra a:{' '}
                     {rewardNames.join(', ') || campaign.name}
                   </p>

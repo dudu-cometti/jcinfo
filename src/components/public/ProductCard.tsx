@@ -20,7 +20,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
   return (
     <Link
       href={`/produtos/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-brand-navy/30 hover:shadow-md"
     >
       <div className="relative aspect-square bg-neutral-100">
         {product.image_url ? (
@@ -51,7 +51,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           {product.promo_price ? (
             <div>
               <span className="text-xs text-neutral-400 line-through">{formatBRL(product.price)}</span>
-              <p className="text-base font-semibold text-neutral-900">{formatBRL(product.promo_price)}</p>
+              <p className="text-base font-semibold text-brand-navy">{formatBRL(product.promo_price)}</p>
             </div>
           ) : (
             <p className="text-base font-semibold text-neutral-900">{formatBRL(product.price)}</p>

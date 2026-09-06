@@ -31,14 +31,14 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16">
-      <section className="rounded-3xl bg-neutral-900 px-8 py-16 text-center text-white">
+      <section className="rounded-3xl bg-gradient-to-br from-brand-teal to-brand-navy px-8 py-16 text-center text-white">
         <h1 className="text-3xl font-semibold sm:text-4xl">Celulares, notebooks e eletrônicos</h1>
-        <p className="mx-auto mt-3 max-w-xl text-neutral-300">
+        <p className="mx-auto mt-3 max-w-xl text-white/80">
           Compre pelo WhatsApp e acumule pontos a cada compra confirmada.
         </p>
         <Link
           href="/produtos"
-          className="mt-6 inline-block rounded-lg bg-white px-6 py-3 text-sm font-medium text-neutral-900 hover:bg-neutral-100"
+          className="mt-6 inline-block rounded-lg bg-brand-cyan px-6 py-3 text-sm font-semibold text-brand-navy hover:brightness-95"
         >
           Ver produtos
         </Link>
@@ -50,7 +50,9 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {campaigns.map((campaign) => (
               <div key={campaign.id} className="rounded-2xl border border-neutral-200 bg-white p-5">
-                <Badge tone="blue">{campaign.min_points.toLocaleString('pt-BR')} pontos</Badge>
+                <Badge className="bg-brand-cyan/15 text-brand-navy">
+                  {campaign.min_points.toLocaleString('pt-BR')} pontos
+                </Badge>
                 <h3 className="mt-2 font-medium text-neutral-900">{campaign.name}</h3>
                 <p className="mt-1 text-sm text-neutral-500">{campaign.description}</p>
               </div>
@@ -63,7 +65,7 @@ export default async function HomePage() {
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-neutral-900">Produtos em destaque</h2>
-            <Link href="/produtos" className="text-sm text-neutral-600 hover:underline">
+            <Link href="/produtos" className="text-sm text-brand-navy hover:underline">
               Ver todos
             </Link>
           </div>
@@ -83,7 +85,7 @@ export default async function HomePage() {
               <Link
                 key={category.id}
                 href={`/categoria/${category.slug}`}
-                className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/30 hover:bg-brand-navy/5 hover:text-brand-navy"
               >
                 {category.name}
               </Link>

@@ -20,13 +20,13 @@ export default async function PublicLayout({ children }: { children: React.React
           </Link>
           <nav className="flex items-center gap-6">
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className="text-sm text-neutral-600 hover:text-neutral-900">
+              <Link key={item.href} href={item.href} className="text-sm text-neutral-600 hover:text-brand-navy">
                 {item.label}
               </Link>
             ))}
             <Link
               href="/login"
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+              className="rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
             >
               Entrar
             </Link>
@@ -45,7 +45,7 @@ export default async function PublicLayout({ children }: { children: React.React
             Ao se cadastrar, você concorda com o uso dos seus dados (nome, telefone e e-mail) apenas para
             identificação de compras e acúmulo de pontos. Solicite alteração ou exclusão dos seus dados
             entrando em contato pelo WhatsApp. Leia nossa{' '}
-            <Link href="/privacidade" className="underline hover:text-neutral-700">
+            <Link href="/privacidade" className="text-brand-navy underline hover:text-brand-teal">
               política de privacidade
             </Link>
             .
