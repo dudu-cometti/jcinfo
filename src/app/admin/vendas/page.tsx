@@ -47,7 +47,12 @@ export default async function AdminVendasPage({ searchParams }: PageProps<'/admi
 
   return (
     <div className="space-y-4">
-      <h1 className="text-lg font-semibold text-neutral-900">Vendas</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-neutral-900">Vendas</h1>
+        <Link href="/vendedor/vendas/nova">
+          <Button>+ Nova venda</Button>
+        </Link>
+      </div>
 
       <form className="flex gap-3">
         <Select name="status" defaultValue={status} className="max-w-[220px]">
