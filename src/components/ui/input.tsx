@@ -1,10 +1,14 @@
 import { cn } from '@/lib/utils'
 
+// Fonte mínima de 16px no celular: abaixo disso o Safari do iPhone dá zoom
+// automático ao focar o campo, e esse zoom fica preso nas telas seguintes.
+const FIELD_TEXT_SIZE = 'text-base sm:text-sm'
+
 export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       className={cn(
-        'w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400',
+        `w-full rounded-lg border border-neutral-300 px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
         className,
       )}
       {...props}
@@ -19,7 +23,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        'w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400',
+        `w-full rounded-lg border border-neutral-300 px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
         className,
       )}
       {...props}
@@ -34,7 +38,7 @@ export function Select({
   return (
     <select
       className={cn(
-        'w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400',
+        `w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
         className,
       )}
       {...props}

@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Input, Select } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Table, Thead, Th, Tr, Td, EmptyState } from '@/components/ui/table'
+import { Table, Thead, Th, Tr, Td } from '@/components/ui/table'
 import { formatBRL } from '@/lib/utils'
 
 export const metadata = { title: 'Produtos' }
@@ -109,66 +109,110 @@ export default async function AdminProdutosPage({
         </Button>
       </form>
 
-      <Table>
-        <Thead>
-          <Th>Produto</Th>
-          <Th className="hidden sm:table-cell">Categoria</Th>
-          <Th className="hidden sm:table-cell">Marca</Th>
-          <Th>Preço</Th>
-          <Th className="hidden sm:table-cell">Estoque</Th>
-          <Th>Status</Th>
-          <Th />
-        </Thead>
-        <tbody>
-          {visibleProducts.length === 0 ? (
-            <EmptyState message="Nenhum produto encontrado." />
-          ) : (
-            visibleProducts.map((product) => (
-              <Tr key={product.id}>
-                <Td>
-                  <div className="font-medium text-neutral-900">{product.name}</div>
-                  {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
-                </Td>
-                <Td className="hidden sm:table-cell">{product.category?.name ?? '-'}</Td>
-                <Td className="hidden sm:table-cell">{product.brand?.name ?? '-'}</Td>
-                <Td>
-                  {product.promo_price ? (
-                    <div>
-                      <span className="text-neutral-400 line-through">{formatBRL(product.price)}</span>{' '}
-                      <span className="font-medium text-neutral-900">{formatBRL(product.promo_price)}</span>
+      {visibleProducts.length === 0 ? (
+        <div className="rounded-xl border border-neutral-200 bg-white px-4 py-10 text-center text-sm text-neutral-400">
+          Nenhum produto encontrado.
+        </div>
+      ) : (
+        <>
+          {/* Cards no celular: a tabela completa não cabe numa tela pequena. */}
+          <div className="grid grid-cols-1 gap-3 sm:hidden">
+            {visibleProducts.map((product) => (
+              <div key={product.id} className="rounded-xl border border-neutral-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium text-neutral-900">{product.name}</div>
+                    <div className="mt-1">
+                      {product.promo_price ? (
+                        <span>
+                          <span className="text-neutral-400 line-through">{formatBRL(product.price)}</span>{' '}
+                          <span className="font-medium text-neutral-900">{formatBRL(product.promo_price)}</span>
+                        </span>
+                      ) : (
+                        <span className="text-neutral-700">{formatBRL(product.price)}</span>
+                      )}
                     </div>
-                  ) : (
-                    formatBRL(product.price)
-                  )}
-                </Td>
-                <Td className="hidden sm:table-cell">
-                  <span className={product.stock <= product.min_stock ? 'font-medium text-red-600' : ''}>
-                    {product.stock}
-                  </span>
-                </Td>
-                <Td>
-                  <div className="flex flex-col gap-1">
-                    <Badge tone={product.status === 'ativo' ? 'green' : 'neutral'}>
-                      {product.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                    </Badge>
-                    {product.featured && <Badge tone="yellow">Destaque</Badge>}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      <Badge tone={product.status === 'ativo' ? 'green' : 'neutral'}>
+                        {product.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                      {product.featured && <Badge tone="yellow">Destaque</Badge>}
+                    </div>
                   </div>
-                </Td>
-                <Td>
-                  <div className="flex items-center justify-end gap-3">
-                    <Link href={`/admin/produtos/${product.id}#imagens`} className="text-sm text-neutral-600 hover:underline">
+                  <div className="flex shrink-0 flex-col items-end gap-2 text-sm">
+                    <Link href={`/admin/produtos/${product.id}#imagens`} className="text-neutral-600 hover:underline">
                       Fotos
                     </Link>
-                    <Link href={`/admin/produtos/${product.id}`} className="text-sm text-neutral-600 hover:underline">
+                    <Link href={`/admin/produtos/${product.id}`} className="font-medium text-neutral-900 hover:underline">
                       Editar
                     </Link>
                   </div>
-                </Td>
-              </Tr>
-            ))
-          )}
-        </tbody>
-      </Table>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Tabela completa a partir de sm. */}
+          <div className="hidden sm:block">
+            <Table>
+              <Thead>
+                <Th>Produto</Th>
+                <Th>Categoria</Th>
+                <Th>Marca</Th>
+                <Th>Preço</Th>
+                <Th>Estoque</Th>
+                <Th>Status</Th>
+                <Th />
+              </Thead>
+              <tbody>
+                {visibleProducts.map((product) => (
+                  <Tr key={product.id}>
+                    <Td>
+                      <div className="font-medium text-neutral-900">{product.name}</div>
+                      {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
+                    </Td>
+                    <Td>{product.category?.name ?? '-'}</Td>
+                    <Td>{product.brand?.name ?? '-'}</Td>
+                    <Td>
+                      {product.promo_price ? (
+                        <div>
+                          <span className="text-neutral-400 line-through">{formatBRL(product.price)}</span>{' '}
+                          <span className="font-medium text-neutral-900">{formatBRL(product.promo_price)}</span>
+                        </div>
+                      ) : (
+                        formatBRL(product.price)
+                      )}
+                    </Td>
+                    <Td>
+                      <span className={product.stock <= product.min_stock ? 'font-medium text-red-600' : ''}>
+                        {product.stock}
+                      </span>
+                    </Td>
+                    <Td>
+                      <div className="flex flex-col gap-1">
+                        <Badge tone={product.status === 'ativo' ? 'green' : 'neutral'}>
+                          {product.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                        </Badge>
+                        {product.featured && <Badge tone="yellow">Destaque</Badge>}
+                      </div>
+                    </Td>
+                    <Td>
+                      <div className="flex items-center justify-end gap-3">
+                        <Link href={`/admin/produtos/${product.id}#imagens`} className="text-sm text-neutral-600 hover:underline">
+                          Fotos
+                        </Link>
+                        <Link href={`/admin/produtos/${product.id}`} className="text-sm text-neutral-600 hover:underline">
+                          Editar
+                        </Link>
+                      </div>
+                    </Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </>
+      )}
 
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 text-sm">
