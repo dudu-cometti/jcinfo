@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps<'/pre-venda/[slug]'
     openGraph: {
       title: `Pré-venda: ${campaign.name}`,
       description: campaign.description ?? undefined,
-      images: campaign.image_url ?? campaign.image_url_mobile ? [{ url: campaign.image_url ?? campaign.image_url_mobile! }] : undefined,
+      images: campaign.image_url_mobile ?? campaign.image_url ? [{ url: campaign.image_url_mobile ?? campaign.image_url! }] : undefined,
     },
   }
 }
@@ -48,8 +48,10 @@ export default async function PreorderPage({ params }: PageProps<'/pre-venda/[sl
       ? `Quem entrar na lista garante ${campaign.discount_percentage}% de desconto`
       : null
 
-  const desktopImage = campaign.image_url ?? campaign.image_url_mobile
-  const mobileImage = campaign.image_url_mobile ?? campaign.image_url
+  // A imagem quadrada funciona bem tanto no painel do celular (empilhado,
+  // largura cheia) quanto no do computador (coluna alta e estreita): uma
+  // imagem paisagem cortava o conteúdo dos lados nesse segundo caso.
+  const image = campaign.image_url_mobile ?? campaign.image_url
 
   return (
     <div className="-mx-4 -my-8 overflow-hidden rounded-none bg-neutral-950 text-white sm:-mx-8 sm:mx-0 sm:my-0 sm:rounded-3xl">
@@ -95,27 +97,16 @@ export default async function PreorderPage({ params }: PageProps<'/pre-venda/[sl
         </div>
 
         <div className="relative min-h-[320px] bg-neutral-900 lg:min-h-full">
-          {mobileImage && (
+          {image ? (
             <Image
-              src={mobileImage}
+              src={image}
               alt={campaign.name}
               fill
-              sizes="100vw"
-              className="object-cover lg:hidden"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
               priority
             />
-          )}
-          {desktopImage && (
-            <Image
-              src={desktopImage}
-              alt={campaign.name}
-              fill
-              sizes="50vw"
-              className="hidden object-cover lg:block"
-              priority
-            />
-          )}
-          {!mobileImage && !desktopImage && (
+          ) : (
             <div className="flex h-full min-h-[320px] items-center justify-center">
               <span className="text-8xl font-semibold text-white/10">{campaign.name.slice(0, 2).toUpperCase()}</span>
             </div>
