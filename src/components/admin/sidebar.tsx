@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 const NAV_ITEMS = [
   { href: '/admin/dashboard', label: 'Dashboard' },
+  { href: '/admin/destaques', label: 'Destaques da home' },
   { href: '/admin/produtos', label: 'Produtos' },
   { href: '/admin/categorias', label: 'Categorias' },
   { href: '/admin/marcas', label: 'Marcas' },

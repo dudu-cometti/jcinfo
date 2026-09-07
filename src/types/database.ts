@@ -454,6 +454,31 @@ export type Database = {
         }
         Update: Partial<Database['public']['Tables']['preorder_signups']['Insert']>
       }
+      home_banners: {
+        Row: {
+          id: string
+          title: string
+          subtitle: string | null
+          cta_label: string | null
+          cta_href: string | null
+          image_url: string | null
+          position: number
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          subtitle?: string | null
+          cta_label?: string | null
+          cta_href?: string | null
+          image_url?: string | null
+          position?: number
+          active?: boolean
+        }
+        Update: Partial<Database['public']['Tables']['home_banners']['Insert']>
+      }
     }
     Views: Record<string, never>
     Functions: {

@@ -1,28 +1,35 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ProductCard, type ProductCardData } from '@/components/public/ProductCard'
+import { HeroCarousel } from '@/components/public/HeroCarousel'
 import { Badge } from '@/components/ui/badge'
 
 export default async function HomePage() {
   const supabase = await createClient()
 
-  const [{ data: featuredProducts }, { data: categories }, { data: brands }, { data: campaigns }] = await Promise.all([
-    supabase
-      .from('products')
-      .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
-      .eq('status', 'ativo')
-      .eq('featured', true)
-      .order('created_at', { ascending: false })
-      .limit(8),
-    supabase.from('categories').select('id, name, slug').order('name').limit(12),
-    supabase.from('brands').select('id, name, slug').order('name').limit(12),
-    supabase
-      .from('point_campaigns')
-      .select('id, name, description, min_points')
-      .eq('status', 'ativa')
-      .eq('featured', true)
-      .limit(3),
-  ])
+  const [{ data: banners }, { data: featuredProducts }, { data: categories }, { data: brands }, { data: campaigns }] =
+    await Promise.all([
+      supabase
+        .from('home_banners')
+        .select('id, title, subtitle, cta_label, cta_href, image_url')
+        .eq('active', true)
+        .order('position'),
+      supabase
+        .from('products')
+        .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
+        .eq('status', 'ativo')
+        .eq('featured', true)
+        .order('created_at', { ascending: false })
+        .limit(8),
+      supabase.from('categories').select('id, name, slug').order('name').limit(12),
+      supabase.from('brands').select('id, name, slug').order('name').limit(12),
+      supabase
+        .from('point_campaigns')
+        .select('id, name, description, min_points')
+        .eq('status', 'ativa')
+        .eq('featured', true)
+        .limit(3),
+    ])
 
   type RawProduct = ProductCardData & { images: { url: string; position: number }[] }
   const products = ((featuredProducts ?? []) as unknown as RawProduct[]).map((p) => ({
@@ -32,18 +39,7 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16">
-      <section className="rounded-3xl bg-gradient-to-br from-brand-teal to-brand-navy px-8 py-16 text-center text-white">
-        <h1 className="text-3xl font-semibold sm:text-4xl">Celulares, notebooks e eletrônicos</h1>
-        <p className="mx-auto mt-3 max-w-xl text-white/80">
-          Compre pelo WhatsApp e acumule pontos a cada compra confirmada.
-        </p>
-        <Link
-          href="/produtos"
-          className="mt-6 inline-block rounded-lg bg-brand-cyan px-6 py-3 text-sm font-semibold text-brand-navy hover:brightness-95"
-        >
-          Ver produtos
-        </Link>
-      </section>
+      <HeroCarousel banners={banners ?? []} />
 
       {campaigns && campaigns.length > 0 && (
         <section>
