@@ -6,6 +6,7 @@ import { formatDate, formatDateTime } from '@/lib/utils'
 import { PreorderCampaignForm } from '../PreorderCampaignForm'
 import { updatePreorderCampaign, deletePreorderCampaign } from '../actions'
 import { ConvertedToggle } from './ConvertedToggle'
+import { CampaignImageManager } from './CampaignImageManager'
 
 export const metadata = { title: 'Pré-venda' }
 
@@ -78,21 +79,32 @@ export default async function EditPreorderCampaignPage({
         </Card>
       </div>
 
-      <Card className="h-fit">
-        <h2 className="mb-4 text-sm font-semibold text-neutral-900">Editar pré-venda</h2>
-        <PreorderCampaignForm
-          action={updatePreorderCampaign.bind(null, campaign.id)}
-          rewards={rewards ?? []}
-          defaultValues={{
-            ...campaign,
-            expected_date: campaign.expected_date ? campaign.expected_date.slice(0, 10) : null,
-          }}
-          submitLabel="Salvar alterações"
-        />
-        {campaign.expected_date && (
-          <p className="mt-3 text-xs text-neutral-400">Chegada prevista: {formatDate(campaign.expected_date)}</p>
-        )}
-      </Card>
+      <div className="h-fit space-y-6">
+        <Card>
+          <h2 className="mb-4 text-sm font-semibold text-neutral-900">Imagens</h2>
+          <CampaignImageManager
+            campaignId={campaign.id}
+            imageUrl={campaign.image_url}
+            imageUrlMobile={campaign.image_url_mobile}
+          />
+        </Card>
+
+        <Card>
+          <h2 className="mb-4 text-sm font-semibold text-neutral-900">Editar pré-venda</h2>
+          <PreorderCampaignForm
+            action={updatePreorderCampaign.bind(null, campaign.id)}
+            rewards={rewards ?? []}
+            defaultValues={{
+              ...campaign,
+              expected_date: campaign.expected_date ? campaign.expected_date.slice(0, 10) : null,
+            }}
+            submitLabel="Salvar alterações"
+          />
+          {campaign.expected_date && (
+            <p className="mt-3 text-xs text-neutral-400">Chegada prevista: {formatDate(campaign.expected_date)}</p>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }

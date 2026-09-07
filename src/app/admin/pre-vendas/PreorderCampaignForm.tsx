@@ -21,7 +21,6 @@ export function PreorderCampaignForm({
     name: string
     slug: string
     description: string | null
-    image_url: string | null
     expected_price: number | null
     expected_date: string | null
     discount_percentage: number | null
@@ -63,10 +62,6 @@ export function PreorderCampaignForm({
 
       <Field label="Descrição" htmlFor="description">
         <Textarea id="description" name="description" rows={3} defaultValue={defaultValues?.description ?? ''} />
-      </Field>
-
-      <Field label="URL da imagem" htmlFor="image_url">
-        <Input id="image_url" name="image_url" type="url" defaultValue={defaultValues?.image_url ?? ''} />
       </Field>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

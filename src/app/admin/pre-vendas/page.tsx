@@ -69,7 +69,10 @@ export default async function AdminPreVendasPage() {
       </div>
 
       <Card className="h-fit">
-        <h2 className="mb-4 text-sm font-semibold text-neutral-900">Nova pré-venda</h2>
+        <h2 className="text-sm font-semibold text-neutral-900">Nova pré-venda</h2>
+        <p className="mb-4 mt-1 text-xs text-neutral-500">
+          As imagens são adicionadas depois de salvar, na tela de gerenciamento da pré-venda.
+        </p>
         <PreorderCampaignForm action={createPreorderCampaign} rewards={rewards ?? []} submitLabel="Criar pré-venda" />
       </Card>
     </div>

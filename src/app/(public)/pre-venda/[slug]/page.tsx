@@ -9,7 +9,9 @@ async function getCampaign(slug: string) {
   const supabase = await createClient()
   const { data } = await supabase
     .from('preorder_campaigns')
-    .select('id, name, description, image_url, expected_price, expected_date, discount_percentage, status, reward:rewards(name)')
+    .select(
+      'id, name, description, image_url, image_url_mobile, expected_price, expected_date, discount_percentage, status, reward:rewards(name)',
+    )
     .eq('slug', slug)
     .single()
   return data
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: PageProps<'/pre-venda/[slug]'
     openGraph: {
       title: `Pré-venda: ${campaign.name}`,
       description: campaign.description ?? undefined,
-      images: campaign.image_url ? [{ url: campaign.image_url }] : undefined,
+      images: campaign.image_url ?? campaign.image_url_mobile ? [{ url: campaign.image_url ?? campaign.image_url_mobile! }] : undefined,
     },
   }
 }
@@ -45,6 +47,9 @@ export default async function PreorderPage({ params }: PageProps<'/pre-venda/[sl
     : campaign.discount_percentage
       ? `Quem entrar na lista garante ${campaign.discount_percentage}% de desconto`
       : null
+
+  const desktopImage = campaign.image_url ?? campaign.image_url_mobile
+  const mobileImage = campaign.image_url_mobile ?? campaign.image_url
 
   return (
     <div className="-mx-4 -my-8 overflow-hidden rounded-none bg-neutral-950 text-white sm:-mx-8 sm:mx-0 sm:my-0 sm:rounded-3xl">
@@ -90,9 +95,27 @@ export default async function PreorderPage({ params }: PageProps<'/pre-venda/[sl
         </div>
 
         <div className="relative min-h-[320px] bg-neutral-900 lg:min-h-full">
-          {campaign.image_url ? (
-            <Image src={campaign.image_url} alt={campaign.name} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" priority />
-          ) : (
+          {mobileImage && (
+            <Image
+              src={mobileImage}
+              alt={campaign.name}
+              fill
+              sizes="100vw"
+              className="object-cover lg:hidden"
+              priority
+            />
+          )}
+          {desktopImage && (
+            <Image
+              src={desktopImage}
+              alt={campaign.name}
+              fill
+              sizes="50vw"
+              className="hidden object-cover lg:block"
+              priority
+            />
+          )}
+          {!mobileImage && !desktopImage && (
             <div className="flex h-full min-h-[320px] items-center justify-center">
               <span className="text-8xl font-semibold text-white/10">{campaign.name.slice(0, 2).toUpperCase()}</span>
             </div>
