@@ -4,13 +4,17 @@ import { Card } from '@/components/ui/card'
 import { HomeBannerForm } from '../HomeBannerForm'
 import { updateHomeBanner } from '../actions'
 import { BannerImageManager } from './BannerImageManager'
+import { getHomeBannerLinkOptions } from '@/lib/data/link-options'
 
 export const metadata = { title: 'Editar destaque' }
 
 export default async function EditHomeBannerPage({ params }: PageProps<'/admin/destaques/[id]'>) {
   const { id } = await params
   const supabase = await createClient()
-  const { data: banner } = await supabase.from('home_banners').select('*').eq('id', id).single()
+  const [{ data: banner }, linkOptions] = await Promise.all([
+    supabase.from('home_banners').select('*').eq('id', id).single(),
+    getHomeBannerLinkOptions(),
+  ])
 
   if (!banner) notFound()
 
@@ -25,6 +29,7 @@ export default async function EditHomeBannerPage({ params }: PageProps<'/admin/d
         <h2 className="mb-4 text-lg font-semibold text-neutral-900">Editar destaque</h2>
         <HomeBannerForm
           action={updateHomeBanner.bind(null, banner.id)}
+          linkOptions={linkOptions}
           defaultValues={banner}
           submitLabel="Salvar alterações"
         />

@@ -3,16 +3,20 @@
 import { useActionState, useState } from 'react'
 import { Field, Input, Textarea, Checkbox, Label } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { LinkPicker } from './LinkPicker'
+import type { LinkOptionGroup } from '@/lib/data/link-options'
 import type { HomeBannerFormState } from '@/lib/validations/home-banner'
 
 type Action = (state: HomeBannerFormState, formData: FormData) => Promise<HomeBannerFormState>
 
 export function HomeBannerForm({
   action,
+  linkOptions,
   defaultValues,
   submitLabel,
 }: {
   action: Action
+  linkOptions: LinkOptionGroup[]
   defaultValues?: {
     title: string
     subtitle: string | null
@@ -60,17 +64,13 @@ export function HomeBannerForm({
         </>
       )}
 
-      <Field
-        label="Link"
-        htmlFor="cta_href"
-        hint={
-          showOverlay
-            ? 'Para onde o botão leva. Ex: /produtos, /pre-venda/iphone-18, /campanhas'
-            : 'Para onde a imagem leva ao ser clicada. Ex: /produtos, /pre-venda/iphone-18, /campanhas'
-        }
-      >
-        <Input id="cta_href" name="cta_href" defaultValue={defaultValues?.cta_href ?? ''} />
-      </Field>
+      <div>
+        <Label htmlFor="cta_href_picker">Link</Label>
+        <p className="mb-1 text-xs text-neutral-500">
+          {showOverlay ? 'Para onde o botão leva.' : 'Para onde a imagem leva ao ser clicada.'}
+        </p>
+        <LinkPicker options={linkOptions} defaultValue={defaultValues?.cta_href ?? ''} />
+      </div>
 
       <div className="flex items-center gap-2">
         <Checkbox id="active" name="active" defaultChecked={defaultValues?.active ?? true} />

@@ -6,12 +6,16 @@ import { Table, Thead, Th, Tr, Td, EmptyState } from '@/components/ui/table'
 import { HomeBannerForm } from './HomeBannerForm'
 import { BannerRowActions } from './BannerRowActions'
 import { createHomeBanner } from './actions'
+import { getHomeBannerLinkOptions } from '@/lib/data/link-options'
 
 export const metadata = { title: 'Destaques da home' }
 
 export default async function AdminDestaquesPage() {
   const supabase = await createClient()
-  const { data: banners } = await supabase.from('home_banners').select('*').order('position')
+  const [{ data: banners }, linkOptions] = await Promise.all([
+    supabase.from('home_banners').select('*').order('position'),
+    getHomeBannerLinkOptions(),
+  ])
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -59,7 +63,7 @@ export default async function AdminDestaquesPage() {
 
       <Card className="h-fit">
         <h2 className="mb-4 text-sm font-semibold text-neutral-900">Novo destaque</h2>
-        <HomeBannerForm action={createHomeBanner} submitLabel="Criar destaque" />
+        <HomeBannerForm action={createHomeBanner} linkOptions={linkOptions} submitLabel="Criar destaque" />
       </Card>
     </div>
   )
