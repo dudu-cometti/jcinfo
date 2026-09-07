@@ -90,7 +90,7 @@ export function BannerImageManager({
         bannerId={bannerId}
         field="image_url"
         label="Imagem para computador"
-        hint="Formato paisagem, 1920x960px (proporção 2:1). Sem imagem, usa o degradê padrão da marca"
+        hint="Formato paisagem, 2100x900px (proporção 21:9). Sem imagem, usa o degradê padrão da marca"
         currentUrl={imageUrl}
       />
       <ImageSlot

@@ -11,6 +11,7 @@ export type HeroBanner = {
   cta_href: string | null
   image_url: string | null
   image_url_mobile: string | null
+  show_text_overlay: boolean
 }
 
 const AUTO_ADVANCE_MS = 6000
@@ -33,44 +34,60 @@ export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
   const banner = banners[index]
   const desktopImage = banner.image_url ?? banner.image_url_mobile
   const mobileImage = banner.image_url_mobile ?? banner.image_url
-  const boxSizeClasses = 'min-h-[380px] sm:min-h-[420px] lg:min-h-[460px]'
+  const hasImage = Boolean(desktopImage || mobileImage)
+  // Matches the recommended upload sizes exactly (1080x1080 mobile,
+  // 2100x900 desktop) so "cover" never has to guess/crop unpredictably —
+  // an approximate min-height here previously let the real box ratio drift
+  // away from whatever ratio was recommended, cropping images that were
+  // sized "correctly" by that stale advice.
+  const aspectClasses = 'aspect-square md:aspect-[21/9]'
+
+  const backgroundLayers = hasImage ? (
+    <>
+      <div
+        className="absolute inset-0 bg-cover bg-center md:hidden"
+        style={{ backgroundImage: mobileImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${mobileImage})` : OVERLAY }}
+      />
+      <div
+        className="absolute inset-0 hidden bg-cover bg-center md:block"
+        style={{ backgroundImage: desktopImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${desktopImage})` : OVERLAY }}
+      />
+    </>
+  ) : (
+    <div className="absolute inset-0 bg-gradient-to-br from-brand-teal to-brand-navy" />
+  )
+
+  const content = banner.show_text_overlay && (
+    <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 py-8 text-center text-white sm:px-10">
+      <h1 className="text-3xl font-semibold sm:text-4xl">{banner.title}</h1>
+      {banner.subtitle && <p className="mx-auto mt-3 max-w-xl text-white/80">{banner.subtitle}</p>}
+      {banner.cta_label && banner.cta_href && (
+        <Link
+          href={banner.cta_href}
+          className="mt-6 inline-block rounded-lg bg-brand-cyan px-6 py-3 text-sm font-semibold text-brand-navy hover:brightness-95"
+        >
+          {banner.cta_label}
+        </Link>
+      )}
+    </div>
+  )
 
   return (
     <section
-      className={`relative overflow-hidden rounded-3xl ${boxSizeClasses}`}
+      className={`relative overflow-hidden rounded-3xl ${aspectClasses}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {desktopImage || mobileImage ? (
-        <>
-          <div
-            className={`absolute inset-0 bg-cover bg-center md:hidden`}
-            style={{ backgroundImage: mobileImage ? `${OVERLAY}, url(${mobileImage})` : OVERLAY }}
-          />
-          <div
-            className={`absolute inset-0 hidden bg-cover bg-center md:block`}
-            style={{ backgroundImage: desktopImage ? `${OVERLAY}, url(${desktopImage})` : OVERLAY }}
-          />
-        </>
+      {backgroundLayers}
+
+      {!banner.show_text_overlay && banner.cta_href ? (
+        <Link href={banner.cta_href} className="absolute inset-0 z-10" aria-label={banner.title} />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-teal to-brand-navy" />
+        content
       )}
 
-      <div className={`relative z-10 flex ${boxSizeClasses} flex-col items-center justify-center px-6 py-12 text-center text-white sm:px-10`}>
-        <h1 className="text-3xl font-semibold sm:text-4xl">{banner.title}</h1>
-        {banner.subtitle && <p className="mx-auto mt-3 max-w-xl text-white/80">{banner.subtitle}</p>}
-        {banner.cta_label && banner.cta_href && (
-          <Link
-            href={banner.cta_href}
-            className="mt-6 inline-block rounded-lg bg-brand-cyan px-6 py-3 text-sm font-semibold text-brand-navy hover:brightness-95"
-          >
-            {banner.cta_label}
-          </Link>
-        )}
-      </div>
-
       {banners.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
           {banners.map((b, i) => (
             <button
               key={b.id}

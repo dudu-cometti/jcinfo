@@ -11,7 +11,7 @@ export default async function HomePage() {
     await Promise.all([
       supabase
         .from('home_banners')
-        .select('id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile')
+        .select('id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile, show_text_overlay')
         .eq('active', true)
         .order('position'),
       supabase

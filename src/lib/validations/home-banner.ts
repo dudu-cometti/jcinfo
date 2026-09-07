@@ -11,6 +11,7 @@ export const homeBannerSchema = z.object({
   cta_label: optionalString,
   cta_href: optionalString,
   active: z.coerce.boolean(),
+  show_text_overlay: z.coerce.boolean(),
 })
 
 export type HomeBannerFormState = { error?: string } | undefined
@@ -22,5 +23,6 @@ export function parseHomeBannerFormData(formData: FormData) {
     cta_label: formData.get('cta_label'),
     cta_href: formData.get('cta_href'),
     active: formData.get('active') === 'on',
+    show_text_overlay: formData.get('show_text_overlay') === 'on',
   })
 }

@@ -469,6 +469,7 @@ export type Database = {
           image_url_mobile: string | null
           position: number
           active: boolean
+          show_text_overlay: boolean
           created_at: string
           updated_at: string
         }
@@ -482,6 +483,7 @@ export type Database = {
           image_url_mobile?: string | null
           position?: number
           active?: boolean
+          show_text_overlay?: boolean
         }
         Update: Partial<Database['public']['Tables']['home_banners']['Insert']>
       }

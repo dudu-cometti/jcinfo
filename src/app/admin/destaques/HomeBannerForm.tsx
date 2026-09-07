@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { Field, Input, Textarea, Checkbox, Label } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import type { HomeBannerFormState } from '@/lib/validations/home-banner'
@@ -19,31 +19,58 @@ export function HomeBannerForm({
     cta_label: string | null
     cta_href: string | null
     active: boolean
+    show_text_overlay: boolean
   }
   submitLabel: string
 }) {
   const [state, formAction, pending] = useActionState(action, undefined)
+  const [showOverlay, setShowOverlay] = useState(defaultValues?.show_text_overlay ?? true)
 
   return (
     <form action={formAction} className="space-y-4">
-      <Field label="Título" htmlFor="title">
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="show_text_overlay"
+          name="show_text_overlay"
+          checked={showOverlay}
+          onChange={(e) => setShowOverlay(e.target.checked)}
+        />
+        <Label htmlFor="show_text_overlay" className="mb-0">
+          Escrever título e botão por cima da imagem
+        </Label>
+      </div>
+      <p className="-mt-2 text-xs text-neutral-500">
+        {showOverlay
+          ? 'Use para uma foto simples, sem texto desenhado nela. O sistema escurece a imagem e escreve por cima.'
+          : 'Use quando a imagem já é um banner pronto, com texto e botão desenhados nela. A imagem aparece limpa, sem nada por cima, e o link abaixo faz a imagem inteira ser clicável.'}
+      </p>
+
+      <Field label="Título" htmlFor="title" hint={showOverlay ? undefined : 'Usado só como nome interno, não aparece no site'}>
         <Input id="title" name="title" required defaultValue={defaultValues?.title} />
       </Field>
-      <Field label="Subtítulo" htmlFor="subtitle">
-        <Textarea id="subtitle" name="subtitle" rows={2} defaultValue={defaultValues?.subtitle ?? ''} />
+
+      {showOverlay && (
+        <>
+          <Field label="Subtítulo" htmlFor="subtitle">
+            <Textarea id="subtitle" name="subtitle" rows={2} defaultValue={defaultValues?.subtitle ?? ''} />
+          </Field>
+          <Field label="Texto do botão" htmlFor="cta_label">
+            <Input id="cta_label" name="cta_label" defaultValue={defaultValues?.cta_label ?? ''} />
+          </Field>
+        </>
+      )}
+
+      <Field
+        label="Link"
+        htmlFor="cta_href"
+        hint={
+          showOverlay
+            ? 'Para onde o botão leva. Ex: /produtos, /pre-venda/iphone-18, /campanhas'
+            : 'Para onde a imagem leva ao ser clicada. Ex: /produtos, /pre-venda/iphone-18, /campanhas'
+        }
+      >
+        <Input id="cta_href" name="cta_href" defaultValue={defaultValues?.cta_href ?? ''} />
       </Field>
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="Texto do botão" htmlFor="cta_label">
-          <Input id="cta_label" name="cta_label" defaultValue={defaultValues?.cta_label ?? ''} />
-        </Field>
-        <Field
-          label="Link do botão"
-          htmlFor="cta_href"
-          hint="Ex: /produtos, /pre-venda/iphone-18, /campanhas"
-        >
-          <Input id="cta_href" name="cta_href" defaultValue={defaultValues?.cta_href ?? ''} />
-        </Field>
-      </div>
 
       <div className="flex items-center gap-2">
         <Checkbox id="active" name="active" defaultChecked={defaultValues?.active ?? true} />
