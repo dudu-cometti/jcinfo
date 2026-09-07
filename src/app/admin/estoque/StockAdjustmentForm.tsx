@@ -32,7 +32,7 @@ export function StockAdjustmentForm({ products }: { products: { id: string; name
         </Select>
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Tipo" htmlFor="type">
           <Select id="type" name="type" required defaultValue="entrada">
             <option value="entrada">Entrada</option>

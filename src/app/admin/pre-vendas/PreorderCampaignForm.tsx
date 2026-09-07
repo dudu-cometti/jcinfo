@@ -69,7 +69,7 @@ export function PreorderCampaignForm({
         <Input id="image_url" name="image_url" type="url" defaultValue={defaultValues?.image_url ?? ''} />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Preço previsto" htmlFor="expected_price" hint="Deixe em branco se ainda não souber">
           <CurrencyInput id="expected_price" name="expected_price" defaultValue={defaultValues?.expected_price} />
         </Field>
@@ -78,7 +78,7 @@ export function PreorderCampaignForm({
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Desconto para quem entrar na pré-venda" htmlFor="discount_percentage" hint="Percentual, deixe em branco se ainda não decidiu">
           <Input
             id="discount_percentage"

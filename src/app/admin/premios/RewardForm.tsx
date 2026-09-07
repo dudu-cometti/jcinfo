@@ -36,7 +36,7 @@ export function RewardForm({
       <Field label="URL da imagem" htmlFor="image_url">
         <Input id="image_url" name="image_url" type="url" defaultValue={defaultValues?.image_url ?? ''} />
       </Field>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Quantidade disponível" htmlFor="quantity">
           <Input id="quantity" name="quantity" type="number" min="0" required defaultValue={defaultValues?.quantity ?? 0} />
         </Field>

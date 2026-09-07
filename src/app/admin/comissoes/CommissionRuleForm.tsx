@@ -32,7 +32,7 @@ export function CommissionRuleForm({
       <Field label="Nome da regra" htmlFor="name">
         <Input id="name" name="name" required defaultValue={defaultValues?.name} />
       </Field>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Percentual (%)" htmlFor="percentage">
           <Input id="percentage" name="percentage" type="number" step="0.01" min="0" max="100" defaultValue={defaultValues?.percentage ?? ''} />
         </Field>
@@ -43,7 +43,7 @@ export function CommissionRuleForm({
       <Field label="Descrição" htmlFor="description">
         <Textarea id="description" name="description" rows={2} defaultValue={defaultValues?.description ?? ''} />
       </Field>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Início da vigência" htmlFor="period_start">
           <Input id="period_start" name="period_start" type="date" defaultValue={defaultValues?.period_start ?? ''} />
         </Field>
