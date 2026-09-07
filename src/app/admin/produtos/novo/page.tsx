@@ -14,7 +14,10 @@ export default async function NewProductPage() {
 
   return (
     <Card className="max-w-3xl">
-      <h1 className="mb-6 text-lg font-semibold text-neutral-900">Novo produto</h1>
+      <h1 className="text-lg font-semibold text-neutral-900">Novo produto</h1>
+      <p className="mb-6 mt-1 text-sm text-neutral-500">
+        As fotos são adicionadas depois de salvar, na tela de edição do produto.
+      </p>
       <ProductForm
         action={createProduct}
         categories={categories ?? []}

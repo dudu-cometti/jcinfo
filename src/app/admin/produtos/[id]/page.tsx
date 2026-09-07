@@ -42,7 +42,7 @@ export default async function EditProductPage({ params }: PageProps<'/admin/prod
         </form>
       </div>
 
-      <Card>
+      <Card id="imagens" className="scroll-mt-4">
         <h2 className="mb-4 text-sm font-semibold text-neutral-900">Imagens</h2>
         <ImageManager productId={id} images={images ?? []} />
       </Card>

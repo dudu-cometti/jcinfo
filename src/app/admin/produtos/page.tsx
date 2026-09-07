@@ -112,10 +112,10 @@ export default async function AdminProdutosPage({
       <Table>
         <Thead>
           <Th>Produto</Th>
-          <Th>Categoria</Th>
-          <Th>Marca</Th>
+          <Th className="hidden sm:table-cell">Categoria</Th>
+          <Th className="hidden sm:table-cell">Marca</Th>
           <Th>Preço</Th>
-          <Th>Estoque</Th>
+          <Th className="hidden sm:table-cell">Estoque</Th>
           <Th>Status</Th>
           <Th />
         </Thead>
@@ -129,8 +129,8 @@ export default async function AdminProdutosPage({
                   <div className="font-medium text-neutral-900">{product.name}</div>
                   {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
                 </Td>
-                <Td>{product.category?.name ?? '-'}</Td>
-                <Td>{product.brand?.name ?? '-'}</Td>
+                <Td className="hidden sm:table-cell">{product.category?.name ?? '-'}</Td>
+                <Td className="hidden sm:table-cell">{product.brand?.name ?? '-'}</Td>
                 <Td>
                   {product.promo_price ? (
                     <div>
@@ -141,7 +141,7 @@ export default async function AdminProdutosPage({
                     formatBRL(product.price)
                   )}
                 </Td>
-                <Td>
+                <Td className="hidden sm:table-cell">
                   <span className={product.stock <= product.min_stock ? 'font-medium text-red-600' : ''}>
                     {product.stock}
                   </span>
@@ -155,9 +155,14 @@ export default async function AdminProdutosPage({
                   </div>
                 </Td>
                 <Td>
-                  <Link href={`/admin/produtos/${product.id}`} className="text-sm text-neutral-600 hover:underline">
-                    Editar
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    <Link href={`/admin/produtos/${product.id}#imagens`} className="text-sm text-neutral-600 hover:underline">
+                      Fotos
+                    </Link>
+                    <Link href={`/admin/produtos/${product.id}`} className="text-sm text-neutral-600 hover:underline">
+                      Editar
+                    </Link>
+                  </div>
                 </Td>
               </Tr>
             ))
