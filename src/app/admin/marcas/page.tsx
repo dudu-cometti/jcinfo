@@ -17,7 +17,7 @@ export default async function AdminMarcasPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold text-neutral-900">Marcas</h1>
         <Modal triggerLabel="+ Nova marca" title="Nova marca">
           <BrandForm action={createBrand} submitLabel="Criar marca" />

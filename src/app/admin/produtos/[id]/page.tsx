@@ -28,7 +28,7 @@ export default async function EditProductPage({ params }: PageProps<'/admin/prod
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-semibold text-neutral-900">Editar produto</h1>
           <Badge tone={product.status === 'ativo' ? 'green' : 'neutral'}>

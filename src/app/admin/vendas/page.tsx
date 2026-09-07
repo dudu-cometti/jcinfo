@@ -47,7 +47,7 @@ export default async function AdminVendasPage({ searchParams }: PageProps<'/admi
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold text-neutral-900">Vendas</h1>
         <Link href="/vendedor/vendas/nova">
           <Button>+ Nova venda</Button>

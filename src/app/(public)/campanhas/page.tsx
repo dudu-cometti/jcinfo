@@ -37,7 +37,7 @@ export default async function CampanhasPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {rows.map((campaign) => (
             <div key={campaign.id} className="rounded-2xl border border-neutral-200 bg-white p-6">
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
                 <Badge tone={campaign.status === 'ativa' ? 'green' : 'neutral'}>{campaign.status}</Badge>
                 <span className="text-xs text-neutral-400">
                   até {formatDate(campaign.end_date)}

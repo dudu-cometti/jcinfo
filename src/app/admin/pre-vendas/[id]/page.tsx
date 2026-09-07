@@ -38,7 +38,7 @@ export default async function EditPreorderCampaignPage({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-lg font-semibold text-neutral-900">{campaign.name}</h1>
           <form action={deletePreorderCampaign.bind(null, campaign.id)}>
             <button type="submit" className="text-sm text-red-600 hover:underline">

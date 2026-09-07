@@ -60,7 +60,7 @@ export default async function HomePage() {
 
       {products.length > 0 && (
         <section>
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-semibold text-neutral-900">Produtos em destaque</h2>
             <Link href="/produtos" className="text-sm text-brand-navy hover:underline">
               Ver todos

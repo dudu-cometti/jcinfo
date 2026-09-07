@@ -17,7 +17,7 @@ export default async function AdminVendedoresPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold text-neutral-900">Vendedores e administradores</h1>
         <Link href="/admin/vendedores/novo">
           <Button>+ Novo usuário</Button>

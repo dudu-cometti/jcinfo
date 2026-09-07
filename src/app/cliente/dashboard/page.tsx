@@ -59,7 +59,7 @@ export default async function CustomerDashboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-neutral-900">Olá, {session.name}</h1>
           <p className="text-sm text-neutral-500">{session.email}</p>
