@@ -41,6 +41,30 @@ export function normalizePhone(phone: string) {
   return phone.replace(/\D/g, '')
 }
 
+export function normalizeCpf(cpf: string) {
+  return cpf.replace(/\D/g, '')
+}
+
+/** Standard CPF check-digit algorithm, not just a digit-count/format check. */
+export function isValidCpf(value: string): boolean {
+  const cpf = normalizeCpf(value)
+  if (cpf.length !== 11) return false
+  if (/^(\d)\1{10}$/.test(cpf)) return false
+
+  const digits = cpf.split('').map(Number)
+
+  const checkDigit = (length: number) => {
+    let sum = 0
+    for (let i = 0; i < length; i++) {
+      sum += digits[i] * (length + 1 - i)
+    }
+    const remainder = sum % 11
+    return remainder < 2 ? 0 : 11 - remainder
+  }
+
+  return checkDigit(9) === digits[9] && checkDigit(10) === digits[10]
+}
+
 const COMBINING_DIACRITICS = /[̀-ͯ]/g
 
 export function slugify(value: string) {

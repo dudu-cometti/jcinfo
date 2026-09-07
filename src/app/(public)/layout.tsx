@@ -1,13 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getSiteSettings } from '@/lib/data/settings'
-
-const NAV_ITEMS = [
-  { href: '/produtos', label: 'Produtos' },
-  { href: '/pre-venda', label: 'Pré-vendas' },
-  { href: '/campanhas', label: 'Campanhas' },
-  { href: '/sorteios', label: 'Sorteios' },
-]
+import { PublicNav } from '@/components/public/PublicNav'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
@@ -19,19 +13,7 @@ export default async function PublicLayout({ children }: { children: React.React
           <Link href="/" className="flex items-center">
             <Image src="/logo.jpg" alt={settings.site_name} width={170} height={50} priority className="h-10 w-auto" />
           </Link>
-          <nav className="flex items-center gap-6">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className="text-sm text-neutral-600 hover:text-brand-navy">
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              href="/login"
-              className="rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
-            >
-              Entrar
-            </Link>
-          </nav>
+          <PublicNav />
         </div>
       </header>
 
@@ -50,6 +32,11 @@ export default async function PublicLayout({ children }: { children: React.React
               política de privacidade
             </Link>
             .
+          </p>
+          <p>
+            <Link href="/login" className="hover:underline">
+              Acesso da equipe
+            </Link>
           </p>
         </div>
       </footer>

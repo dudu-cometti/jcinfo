@@ -1,6 +1,27 @@
 import { requireRole } from '@/lib/auth/dal'
-import { AdminSidebar } from '@/components/admin/sidebar'
+import { AppShell } from '@/components/layout/AppShell'
 import { logout } from '@/app/login/actions'
+
+const NAV_ITEMS = [
+  { href: '/admin/dashboard', label: 'Dashboard' },
+  { href: '/admin/destaques', label: 'Destaques da home' },
+  { href: '/admin/produtos', label: 'Produtos' },
+  { href: '/admin/categorias', label: 'Categorias' },
+  { href: '/admin/marcas', label: 'Marcas' },
+  { href: '/admin/estoque', label: 'Estoque' },
+  { href: '/admin/vendas', label: 'Vendas' },
+  { href: '/admin/clientes', label: 'Clientes' },
+  { href: '/admin/pontos', label: 'Pontos' },
+  { href: '/admin/campanhas', label: 'Campanhas' },
+  { href: '/admin/premios', label: 'Prêmios' },
+  { href: '/admin/sorteios', label: 'Sorteios' },
+  { href: '/admin/pre-vendas', label: 'Pré-vendas' },
+  { href: '/admin/vendedores', label: 'Vendedores' },
+  { href: '/admin/relatorios', label: 'Relatórios' },
+  { href: '/admin/comissoes', label: 'Comissões' },
+  { href: '/admin/configuracoes', label: 'Configurações' },
+  { href: '/admin/logs', label: 'Logs' },
+]
 
 export default async function AdminLayout({
   children,
@@ -10,22 +31,8 @@ export default async function AdminLayout({
   const session = await requireRole('admin')
 
   return (
-    <div className="flex min-h-screen bg-neutral-50">
-      <AdminSidebar />
-      <div className="flex-1">
-        <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-3">
-          <span className="text-sm text-neutral-500">{session.fullName}</span>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="text-sm text-neutral-500 hover:text-neutral-900"
-            >
-              Sair
-            </button>
-          </form>
-        </header>
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+    <AppShell brandLabel="JC Info · Admin" navItems={NAV_ITEMS} userLabel={session.fullName} logoutAction={logout}>
+      {children}
+    </AppShell>
   )
 }

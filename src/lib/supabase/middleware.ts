@@ -4,6 +4,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 const ADMIN_PREFIX = '/admin'
 const VENDEDOR_PREFIX = '/vendedor'
 const LOGIN_PATH = '/login'
+const CUSTOMER_DASHBOARD_PREFIX = '/cliente/dashboard'
+const CUSTOMER_LOGIN_PATH = '/cliente/login'
 
 /**
  * Refreshes the Supabase auth session on every request and performs an
@@ -45,11 +47,18 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAdminRoute = pathname.startsWith(ADMIN_PREFIX)
   const isVendedorRoute = pathname.startsWith(VENDEDOR_PREFIX)
+  const isCustomerDashboardRoute = pathname.startsWith(CUSTOMER_DASHBOARD_PREFIX)
 
   if ((isAdminRoute || isVendedorRoute) && !data?.claims) {
     const url = request.nextUrl.clone()
     url.pathname = LOGIN_PATH
     url.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (isCustomerDashboardRoute && !data?.claims) {
+    const url = request.nextUrl.clone()
+    url.pathname = CUSTOMER_LOGIN_PATH
     return NextResponse.redirect(url)
   }
 

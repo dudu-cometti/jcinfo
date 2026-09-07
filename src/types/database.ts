@@ -113,6 +113,8 @@ export type Database = {
           name: string
           phone: string
           email: string | null
+          cpf: string | null
+          auth_user_id: string | null
           points: number
           total_spent: number
           last_purchase_at: string | null
@@ -126,6 +128,8 @@ export type Database = {
           name: string
           phone: string
           email?: string | null
+          cpf?: string | null
+          auth_user_id?: string | null
           points?: number
           total_spent?: number
           last_purchase_at?: string | null
@@ -505,9 +509,9 @@ export type Database = {
         }
         Returns: void
       }
-      get_customer_summary: {
-        Args: { p_phone: string }
-        Returns: { name: string; points: number; total_spent: number; rank: number }[]
+      get_my_rank: {
+        Args: Record<string, never>
+        Returns: number
       }
       log_audit: {
         Args: {
