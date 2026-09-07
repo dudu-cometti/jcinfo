@@ -49,3 +49,31 @@ export function ZoomIcon({ className }: { className?: string }) {
     </svg>
   )
 }
+
+export function StarIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 2.5l2.9 6.06 6.6.77-4.86 4.6 1.28 6.57L12 17.35l-5.92 3.15 1.28-6.57-4.86-4.6 6.6-.77z" />
+    </svg>
+  )
+}
+
+export function TrophyIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M8 4h8v5a4 4 0 01-8 0V4z" />
+      <path d="M8 5H5a3 3 0 003 3M16 5h3a3 3 0 01-3 3" />
+      <path d="M12 13v3M9 20h6M10 20v-3.5M14 20v-3.5" />
+    </svg>
+  )
+}
+
+export function WalletIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+      <path d="M16 12h3" />
+      <path d="M3 9h18" />
+    </svg>
+  )
+}
