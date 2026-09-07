@@ -12,10 +12,23 @@ export const metadata = { title: 'Destaques da home' }
 
 export default async function AdminDestaquesPage() {
   const supabase = await createClient()
-  const [{ data: banners }, linkOptions] = await Promise.all([
-    supabase.from('home_banners').select('*').order('position'),
+  const [{ data: banners }, linkOptions, { data: preorderCampaigns }] = await Promise.all([
+    supabase
+      .from('home_banners')
+      .select('*, preorder_campaign:preorder_campaigns(name, slug)')
+      .order('position'),
     getHomeBannerLinkOptions(),
+    supabase.from('preorder_campaigns').select('id, name, status').order('created_at', { ascending: false }),
   ])
+
+  type BannerRow = {
+    id: string
+    title: string
+    cta_href: string | null
+    active: boolean
+    preorder_campaign: { name: string; slug: string } | null
+  }
+  const rows = (banners ?? []) as unknown as BannerRow[]
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -32,17 +45,22 @@ export default async function AdminDestaquesPage() {
             <Th />
           </Thead>
           <tbody>
-            {!banners || banners.length === 0 ? (
+            {rows.length === 0 ? (
               <EmptyState message="Nenhum destaque cadastrado." />
             ) : (
-              banners.map((banner, index) => (
+              rows.map((banner, index) => (
                 <Tr key={banner.id}>
                   <Td>
                     <Link href={`/admin/destaques/${banner.id}`} className="font-medium text-neutral-900 hover:underline">
                       {banner.title}
                     </Link>
+                    {banner.preorder_campaign && (
+                      <div className="text-xs text-neutral-400">Vinculado a: {banner.preorder_campaign.name}</div>
+                    )}
                   </Td>
-                  <Td className="text-xs text-neutral-500">{banner.cta_href ?? '-'}</Td>
+                  <Td className="text-xs text-neutral-500">
+                    {banner.preorder_campaign ? `/pre-venda/${banner.preorder_campaign.slug}` : (banner.cta_href ?? '-')}
+                  </Td>
                   <Td>
                     <Badge tone={banner.active ? 'green' : 'neutral'}>{banner.active ? 'Ativo' : 'Inativo'}</Badge>
                   </Td>
@@ -51,7 +69,7 @@ export default async function AdminDestaquesPage() {
                       bannerId={banner.id}
                       active={banner.active}
                       isFirst={index === 0}
-                      isLast={index === banners.length - 1}
+                      isLast={index === rows.length - 1}
                     />
                   </Td>
                 </Tr>
@@ -63,7 +81,12 @@ export default async function AdminDestaquesPage() {
 
       <Card className="h-fit">
         <h2 className="mb-4 text-sm font-semibold text-neutral-900">Novo destaque</h2>
-        <HomeBannerForm action={createHomeBanner} linkOptions={linkOptions} submitLabel="Criar destaque" />
+        <HomeBannerForm
+          action={createHomeBanner}
+          linkOptions={linkOptions}
+          preorderCampaigns={preorderCampaigns ?? []}
+          submitLabel="Criar destaque"
+        />
       </Card>
     </div>
   )

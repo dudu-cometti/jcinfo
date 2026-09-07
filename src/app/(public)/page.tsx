@@ -11,7 +11,9 @@ export default async function HomePage() {
     await Promise.all([
       supabase
         .from('home_banners')
-        .select('id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile, show_text_overlay')
+        .select(
+          'id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile, show_text_overlay, preorder_campaign:preorder_campaigns(slug, image_url, image_url_mobile)',
+        )
         .eq('active', true)
         .order('position'),
       supabase
@@ -37,9 +39,32 @@ export default async function HomePage() {
     image_url: [...p.images].sort((a, b) => a.position - b.position)[0]?.url ?? null,
   }))
 
+  type RawBanner = {
+    id: string
+    title: string
+    subtitle: string | null
+    cta_label: string | null
+    cta_href: string | null
+    image_url: string | null
+    image_url_mobile: string | null
+    show_text_overlay: boolean
+    preorder_campaign: { slug: string; image_url: string | null; image_url_mobile: string | null } | null
+  }
+  const resolvedBanners = ((banners ?? []) as unknown as RawBanner[]).map((banner) => {
+    const linked = banner.preorder_campaign
+    if (!linked) return banner
+    const linkedImage = linked.image_url_mobile ?? linked.image_url
+    return {
+      ...banner,
+      cta_href: `/pre-venda/${linked.slug}`,
+      image_url: linkedImage,
+      image_url_mobile: linkedImage,
+    }
+  })
+
   return (
     <div className="space-y-16">
-      <HeroCarousel banners={banners ?? []} />
+      <HeroCarousel banners={resolvedBanners} />
 
       {campaigns && campaigns.length > 0 && (
         <section>
