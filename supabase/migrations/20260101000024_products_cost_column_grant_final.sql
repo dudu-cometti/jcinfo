@@ -1,0 +1,26 @@
+-- ============================================================
+-- Column-level GRANT/REVOKE cannot cleanly hide one column while keeping
+-- COUNT(*)/aggregate queries working on the same table for the same role.
+-- Confirmed by two failed attempts against the live database:
+--   1. 000016 revoked table-level SELECT and re-granted only specific
+--      columns — this broke every `products(count)` embed (used by
+--      /admin/categorias and /admin/marcas to show how many products are
+--      in each category/brand), because Postgres requires table-level
+--      SELECT for COUNT(*); no amount of column-level grants satisfies it.
+--   2. 000023's attempt to grant table-level SELECT back and then revoke
+--      just the `cost` column has no effect — a column-level REVOKE
+--      cannot carve an exception out of an already-granted table-level
+--      SELECT. Verified directly: an authenticated (non-admin-role, same
+--      Postgres role as everyone) request could still read `cost` after
+--      that migration.
+--
+-- Reverting to a state that actually works: `products.cost` is selectable
+-- via the regular client at the database level, same as every other
+-- product column. It stays out of the storefront/vendedor UI at the
+-- application layer instead — no non-admin code path ever selects it
+-- (verified: only the admin product edit form does, behind
+-- requireRole('admin')) — which is the only mechanism that ever actually
+-- protected it without breaking something else.
+-- ============================================================
+
+grant select (cost) on public.products to anon, authenticated;

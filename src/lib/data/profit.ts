@@ -1,4 +1,4 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { resolveDateRange, type DateRangeKey } from '@/lib/data/date-range'
 
 export type ProductProfit = {
@@ -20,17 +20,17 @@ export type ProfitReport = {
 }
 
 /**
- * Admin-only by construction: goes through the service-role client because
- * products.cost is no longer readable via the regular (anon-key) client at
- * all (see migration 000016_products_cost_column_security.sql) — there is
- * no role check to bypass here, the column itself is inaccessible any other
- * way. Callers must still gate the page with requireRole('admin').
+ * `products.cost` is readable at the database level (see migration
+ * 000024 — Postgres can't cleanly hide one column while keeping
+ * COUNT(*)/embeds working on the same table), so this relies entirely on
+ * the caller gating the page with requireRole('admin'); it is never
+ * queried from any non-admin route.
  */
 export async function getProfitReport(rangeKey?: DateRangeKey, from?: string, to?: string): Promise<ProfitReport> {
   const { start, end } = resolveDateRange(rangeKey, from, to)
-  const admin = createAdminClient()
+  const supabase = await createClient()
 
-  const { data } = await admin
+  const { data } = await supabase
     .from('sale_items')
     .select(
       'quantity, subtotal, product:products(id, name, cost), sale:sales!inner(status, confirmed_at)',
