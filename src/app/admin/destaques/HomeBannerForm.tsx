@@ -48,7 +48,7 @@ export function HomeBannerForm({
       <Field
         label="Imagem de fundo"
         htmlFor="image_url"
-        hint="Opcional. Sem imagem, usa o degradê padrão da marca"
+        hint="Opcional (sem imagem, usa o degradê padrão da marca). Use uma foto retangular (formato paisagem), no mínimo 1600x900px, com o assunto principal centralizado — o sistema preenche o banner cortando as bordas conforme a tela (mais das laterais no celular, mais de cima/baixo no computador)"
       >
         <Input id="image_url" name="image_url" type="url" defaultValue={defaultValues?.image_url ?? ''} />
       </Field>

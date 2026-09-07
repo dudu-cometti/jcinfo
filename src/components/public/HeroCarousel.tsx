@@ -39,8 +39,8 @@ export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
       <div
         className={
           banner.image_url
-            ? 'bg-cover bg-center px-8 py-16 text-center text-white sm:py-20'
-            : 'bg-gradient-to-br from-brand-teal to-brand-navy px-8 py-16 text-center text-white sm:py-20'
+            ? 'flex min-h-[380px] flex-col items-center justify-center bg-cover bg-center px-6 py-12 text-center text-white sm:min-h-[420px] sm:px-10 lg:min-h-[460px]'
+            : 'flex min-h-[380px] flex-col items-center justify-center bg-gradient-to-br from-brand-teal to-brand-navy px-6 py-12 text-center text-white sm:min-h-[420px] sm:px-10 lg:min-h-[460px]'
         }
         style={
           banner.image_url
