@@ -59,6 +59,7 @@ export default async function HomePage() {
       cta_href: `/pre-venda/${linked.slug}`,
       image_url: linkedImage,
       image_url_mobile: linkedImage,
+      imageFit: 'contain' as const,
     }
   })
 

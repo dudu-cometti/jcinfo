@@ -12,6 +12,10 @@ export type HeroBanner = {
   image_url: string | null
   image_url_mobile: string | null
   show_text_overlay: boolean
+  // 'contain' is for images whose aspect ratio we don't control (e.g. a
+  // linked campaign's square photo) — shown whole, on a blurred backdrop,
+  // instead of being cropped to fill the wide 21:9 desktop frame.
+  imageFit?: 'cover' | 'contain'
 }
 
 const AUTO_ADVANCE_MS = 6000
@@ -42,16 +46,28 @@ export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
   // sized "correctly" by that stale advice.
   const aspectClasses = 'aspect-square md:aspect-[21/9]'
 
+  const contain = banner.imageFit === 'contain'
+
   const backgroundLayers = hasImage ? (
     <>
-      <div
-        className="absolute inset-0 bg-cover bg-center md:hidden"
-        style={{ backgroundImage: mobileImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${mobileImage})` : OVERLAY }}
-      />
-      <div
-        className="absolute inset-0 hidden bg-cover bg-center md:block"
-        style={{ backgroundImage: desktopImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${desktopImage})` : OVERLAY }}
-      />
+      <div className="absolute inset-0 md:hidden">
+        {contain && mobileImage && (
+          <div className="absolute inset-0 scale-110 bg-cover bg-center blur-2xl" style={{ backgroundImage: `url(${mobileImage})` }} />
+        )}
+        <div
+          className={`absolute inset-0 bg-center ${contain ? 'bg-contain bg-no-repeat' : 'bg-cover'}`}
+          style={{ backgroundImage: mobileImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${mobileImage})` : OVERLAY }}
+        />
+      </div>
+      <div className="absolute inset-0 hidden md:block">
+        {contain && desktopImage && (
+          <div className="absolute inset-0 scale-110 bg-cover bg-center blur-2xl" style={{ backgroundImage: `url(${desktopImage})` }} />
+        )}
+        <div
+          className={`absolute inset-0 bg-center ${contain ? 'bg-contain bg-no-repeat' : 'bg-cover'}`}
+          style={{ backgroundImage: desktopImage ? `${banner.show_text_overlay ? OVERLAY + ', ' : ''}url(${desktopImage})` : OVERLAY }}
+        />
+      </div>
     </>
   ) : (
     <div className="absolute inset-0 bg-gradient-to-br from-brand-teal to-brand-navy" />
