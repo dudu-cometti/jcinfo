@@ -10,9 +10,11 @@ export type HeroBanner = {
   cta_label: string | null
   cta_href: string | null
   image_url: string | null
+  image_url_mobile: string | null
 }
 
 const AUTO_ADVANCE_MS = 6000
+const OVERLAY = 'linear-gradient(rgba(10,20,35,0.55), rgba(10,20,35,0.55))'
 
 export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
   const [index, setIndex] = useState(0)
@@ -29,27 +31,32 @@ export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
   if (banners.length === 0) return null
 
   const banner = banners[index]
+  const desktopImage = banner.image_url ?? banner.image_url_mobile
+  const mobileImage = banner.image_url_mobile ?? banner.image_url
+  const boxSizeClasses = 'min-h-[380px] sm:min-h-[420px] lg:min-h-[460px]'
 
   return (
     <section
-      className="relative overflow-hidden rounded-3xl"
+      className={`relative overflow-hidden rounded-3xl ${boxSizeClasses}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div
-        className={
-          banner.image_url
-            ? 'flex min-h-[380px] flex-col items-center justify-center bg-cover bg-center px-6 py-12 text-center text-white sm:min-h-[420px] sm:px-10 lg:min-h-[460px]'
-            : 'flex min-h-[380px] flex-col items-center justify-center bg-gradient-to-br from-brand-teal to-brand-navy px-6 py-12 text-center text-white sm:min-h-[420px] sm:px-10 lg:min-h-[460px]'
-        }
-        style={
-          banner.image_url
-            ? {
-                backgroundImage: `linear-gradient(rgba(10,20,35,0.55), rgba(10,20,35,0.55)), url(${banner.image_url})`,
-              }
-            : undefined
-        }
-      >
+      {desktopImage || mobileImage ? (
+        <>
+          <div
+            className={`absolute inset-0 bg-cover bg-center md:hidden`}
+            style={{ backgroundImage: mobileImage ? `${OVERLAY}, url(${mobileImage})` : OVERLAY }}
+          />
+          <div
+            className={`absolute inset-0 hidden bg-cover bg-center md:block`}
+            style={{ backgroundImage: desktopImage ? `${OVERLAY}, url(${desktopImage})` : OVERLAY }}
+          />
+        </>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-teal to-brand-navy" />
+      )}
+
+      <div className={`relative z-10 flex ${boxSizeClasses} flex-col items-center justify-center px-6 py-12 text-center text-white sm:px-10`}>
         <h1 className="text-3xl font-semibold sm:text-4xl">{banner.title}</h1>
         {banner.subtitle && <p className="mx-auto mt-3 max-w-xl text-white/80">{banner.subtitle}</p>}
         {banner.cta_label && banner.cta_href && (
@@ -63,7 +70,7 @@ export function HeroCarousel({ banners }: { banners: HeroBanner[] }) {
       </div>
 
       {banners.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
           {banners.map((b, i) => (
             <button
               key={b.id}

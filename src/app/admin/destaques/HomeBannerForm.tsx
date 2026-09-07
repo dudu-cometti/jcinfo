@@ -18,7 +18,6 @@ export function HomeBannerForm({
     subtitle: string | null
     cta_label: string | null
     cta_href: string | null
-    image_url: string | null
     active: boolean
   }
   submitLabel: string
@@ -45,13 +44,6 @@ export function HomeBannerForm({
           <Input id="cta_href" name="cta_href" defaultValue={defaultValues?.cta_href ?? ''} />
         </Field>
       </div>
-      <Field
-        label="Imagem de fundo"
-        htmlFor="image_url"
-        hint="Opcional (sem imagem, usa o degradê padrão da marca). Use uma foto retangular (formato paisagem), no mínimo 1600x900px, com o assunto principal centralizado — o sistema preenche o banner cortando as bordas conforme a tela (mais das laterais no celular, mais de cima/baixo no computador)"
-      >
-        <Input id="image_url" name="image_url" type="url" defaultValue={defaultValues?.image_url ?? ''} />
-      </Field>
 
       <div className="flex items-center gap-2">
         <Checkbox id="active" name="active" defaultChecked={defaultValues?.active ?? true} />

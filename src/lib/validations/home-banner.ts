@@ -10,7 +10,6 @@ export const homeBannerSchema = z.object({
   subtitle: optionalString,
   cta_label: optionalString,
   cta_href: optionalString,
-  image_url: optionalString,
   active: z.coerce.boolean(),
 })
 
@@ -22,7 +21,6 @@ export function parseHomeBannerFormData(formData: FormData) {
     subtitle: formData.get('subtitle'),
     cta_label: formData.get('cta_label'),
     cta_href: formData.get('cta_href'),
-    image_url: formData.get('image_url'),
     active: formData.get('active') === 'on',
   })
 }

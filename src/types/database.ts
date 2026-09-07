@@ -466,6 +466,7 @@ export type Database = {
           cta_label: string | null
           cta_href: string | null
           image_url: string | null
+          image_url_mobile: string | null
           position: number
           active: boolean
           created_at: string
@@ -478,6 +479,7 @@ export type Database = {
           cta_label?: string | null
           cta_href?: string | null
           image_url?: string | null
+          image_url_mobile?: string | null
           position?: number
           active?: boolean
         }
