@@ -85,14 +85,14 @@ export function BannerImageManager({
         bannerId={bannerId}
         field="image_url"
         label="Imagem para computador"
-        hint="Formato paisagem, mínimo 1600x900px. Sem imagem, usa o degradê padrão da marca"
+        hint="Formato paisagem, 1920x960px (proporção 2:1). Sem imagem, usa o degradê padrão da marca"
         currentUrl={imageUrl}
       />
       <ImageSlot
         bannerId={bannerId}
         field="image_url_mobile"
         label="Imagem para celular"
-        hint="Opcional. Sem imagem própria, usa a mesma imagem do computador, recortada"
+        hint="Formato quadrado, 1080x1080px. Sem imagem própria, usa a mesma imagem do computador, recortada"
         currentUrl={imageUrlMobile}
       />
     </div>
