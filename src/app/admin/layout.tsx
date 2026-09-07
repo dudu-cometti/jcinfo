@@ -1,26 +1,49 @@
 import { requireRole } from '@/lib/auth/dal'
-import { AppShell } from '@/components/layout/AppShell'
+import { AppShell, type NavEntry } from '@/components/layout/AppShell'
 import { logout } from '@/app/login/actions'
 
-const NAV_ITEMS = [
+const NAV_ITEMS: NavEntry[] = [
   { href: '/admin/dashboard', label: 'Dashboard' },
-  { href: '/admin/destaques', label: 'Destaques da home' },
-  { href: '/admin/produtos', label: 'Produtos' },
-  { href: '/admin/categorias', label: 'Categorias' },
-  { href: '/admin/marcas', label: 'Marcas' },
-  { href: '/admin/estoque', label: 'Estoque' },
-  { href: '/admin/vendas', label: 'Vendas' },
-  { href: '/admin/clientes', label: 'Clientes' },
-  { href: '/admin/pontos', label: 'Pontos' },
-  { href: '/admin/campanhas', label: 'Campanhas' },
-  { href: '/admin/premios', label: 'Prêmios' },
-  { href: '/admin/sorteios', label: 'Sorteios' },
-  { href: '/admin/pre-vendas', label: 'Pré-vendas' },
-  { href: '/admin/vendedores', label: 'Vendedores' },
-  { href: '/admin/relatorios', label: 'Relatórios' },
-  { href: '/admin/comissoes', label: 'Comissões' },
-  { href: '/admin/configuracoes', label: 'Configurações' },
-  { href: '/admin/logs', label: 'Logs' },
+  {
+    label: 'Catálogo',
+    items: [
+      { href: '/admin/produtos', label: 'Produtos' },
+      { href: '/admin/categorias', label: 'Categorias' },
+      { href: '/admin/marcas', label: 'Marcas' },
+      { href: '/admin/estoque', label: 'Estoque' },
+    ],
+  },
+  {
+    label: 'Vendas',
+    items: [
+      { href: '/admin/vendas', label: 'Vendas' },
+      { href: '/admin/clientes', label: 'Clientes' },
+      { href: '/admin/comissoes', label: 'Comissões' },
+    ],
+  },
+  {
+    label: 'Marketing',
+    items: [
+      { href: '/admin/destaques', label: 'Destaques da home' },
+      { href: '/admin/campanhas', label: 'Campanhas' },
+      { href: '/admin/premios', label: 'Prêmios' },
+      { href: '/admin/sorteios', label: 'Sorteios' },
+      { href: '/admin/pre-vendas', label: 'Pré-vendas' },
+      { href: '/admin/pontos', label: 'Pontos' },
+    ],
+  },
+  {
+    label: 'Equipe',
+    items: [{ href: '/admin/vendedores', label: 'Vendedores' }],
+  },
+  {
+    label: 'Sistema',
+    items: [
+      { href: '/admin/relatorios', label: 'Relatórios' },
+      { href: '/admin/configuracoes', label: 'Configurações' },
+      { href: '/admin/logs', label: 'Logs' },
+    ],
+  },
 ]
 
 export default async function AdminLayout({

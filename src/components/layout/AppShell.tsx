@@ -2,8 +2,55 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-export type NavItem = { href: string; label: string }
+export type NavLeaf = { href: string; label: string }
+export type NavGroup = { label: string; items: NavLeaf[] }
+export type NavEntry = NavLeaf | NavGroup
+
+function isGroup(entry: NavEntry): entry is NavGroup {
+  return 'items' in entry
+}
+
+function NavLink({ item, onNavigate }: { item: NavLeaf; onNavigate: () => void }) {
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className="rounded-lg px-3 py-2 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900"
+    >
+      {item.label}
+    </Link>
+  )
+}
+
+function NavGroupSection({ group, onNavigate }: { group: NavGroup; onNavigate: () => void }) {
+  const pathname = usePathname()
+  const isActive = group.items.some((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`))
+  const [open, setOpen] = useState(isActive)
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-neutral-100 ${
+          isActive ? 'text-neutral-900' : 'text-neutral-500'
+        }`}
+      >
+        {group.label}
+        <span className={`text-xs transition-transform ${open ? 'rotate-90' : ''}`}>{'>'}</span>
+      </button>
+      {open && (
+        <div className="ml-2 flex flex-col gap-1 border-l border-neutral-200 pl-2">
+          {group.items.map((item) => (
+            <NavLink key={item.href} item={item} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export function AppShell({
   brandLabel,
@@ -13,7 +60,7 @@ export function AppShell({
   children,
 }: {
   brandLabel: string
-  navItems: NavItem[]
+  navItems: NavEntry[]
   userLabel: string
   logoutAction: () => Promise<void>
   children: React.ReactNode
@@ -46,16 +93,13 @@ export function AppShell({
             Fechar
           </button>
         </div>
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => setOpen(false)}
-            className="rounded-lg px-3 py-2 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900"
-          >
-            {item.label}
-          </Link>
-        ))}
+        {navItems.map((entry) =>
+          isGroup(entry) ? (
+            <NavGroupSection key={entry.label} group={entry} onNavigate={() => setOpen(false)} />
+          ) : (
+            <NavLink key={entry.href} item={entry} onNavigate={() => setOpen(false)} />
+          ),
+        )}
       </nav>
 
       <div className="flex min-h-screen flex-1 flex-col">
