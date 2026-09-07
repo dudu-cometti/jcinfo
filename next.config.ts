@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
       ? [{ protocol: "https", hostname: supabaseHostname, pathname: "/storage/v1/object/public/**" }]
       : [],
   },
+  // Server Actions default to a 1MB request body limit — too small for the
+  // 5MB image uploads allowed by uploadProductImage/uploadHomeBannerImage
+  // (src/app/admin/produtos/actions.ts, src/app/admin/destaques/actions.ts).
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
 };
 
 export default nextConfig;

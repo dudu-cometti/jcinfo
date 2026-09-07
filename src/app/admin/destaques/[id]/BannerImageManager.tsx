@@ -28,12 +28,17 @@ function ImageSlot({
     setPending(true)
     setError(null)
 
-    const formData = new FormData()
-    formData.set('file', file)
-    const result = await uploadHomeBannerImage(bannerId, field, formData)
-    if (result?.error) setError(result.error)
-    setPending(false)
-    e.target.value = ''
+    try {
+      const formData = new FormData()
+      formData.set('file', file)
+      const result = await uploadHomeBannerImage(bannerId, field, formData)
+      if (result?.error) setError(result.error)
+    } catch {
+      setError('Erro ao enviar imagem. Tente novamente.')
+    } finally {
+      setPending(false)
+      e.target.value = ''
+    }
   }
 
   return (
