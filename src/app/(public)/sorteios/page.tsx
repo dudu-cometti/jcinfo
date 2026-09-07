@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
+import { RaffleSignupForm } from './RaffleSignupForm'
 
 export const metadata: Metadata = {
   title: 'Sorteios',
@@ -53,6 +54,7 @@ export default async function SorteiosPage() {
                   Vencedor: {raffle.raffle_winners[0].customer?.name}
                 </p>
               )}
+              {raffle.status === 'aberto' && <RaffleSignupForm raffleId={raffle.id} />}
             </div>
           ))}
         </div>
