@@ -100,6 +100,23 @@ export async function toggleHomeBannerActive(bannerId: string, active: boolean) 
   revalidatePath('/')
 }
 
+/** Escolhe se a imagem do destaque vem de upload próprio (null) ou é reaproveitada de uma pré-venda. */
+export async function setHomeBannerPreorderCampaign(bannerId: string, preorderCampaignId: string | null) {
+  await requireRole('admin')
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('home_banners')
+    .update({ preorder_campaign_id: preorderCampaignId })
+    .eq('id', bannerId)
+  if (error) return { error: 'Erro ao definir a origem da imagem.' }
+
+  revalidatePath(`/admin/destaques/${bannerId}`)
+  revalidatePath('/admin/destaques')
+  revalidatePath('/')
+  return { error: undefined }
+}
+
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 type BannerImageField = 'image_url' | 'image_url_mobile'

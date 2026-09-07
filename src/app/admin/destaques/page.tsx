@@ -12,13 +12,12 @@ export const metadata = { title: 'Destaques da home' }
 
 export default async function AdminDestaquesPage() {
   const supabase = await createClient()
-  const [{ data: banners }, linkOptions, { data: preorderCampaigns }] = await Promise.all([
+  const [{ data: banners }, linkOptions] = await Promise.all([
     supabase
       .from('home_banners')
-      .select('*, preorder_campaign:preorder_campaigns(name, slug)')
+      .select('*, preorder_campaign:preorder_campaigns(name)')
       .order('position'),
     getHomeBannerLinkOptions(),
-    supabase.from('preorder_campaigns').select('id, name, status').order('created_at', { ascending: false }),
   ])
 
   type BannerRow = {
@@ -26,7 +25,7 @@ export default async function AdminDestaquesPage() {
     title: string
     cta_href: string | null
     active: boolean
-    preorder_campaign: { name: string; slug: string } | null
+    preorder_campaign: { name: string } | null
   }
   const rows = (banners ?? []) as unknown as BannerRow[]
 
@@ -58,9 +57,7 @@ export default async function AdminDestaquesPage() {
                       <div className="text-xs text-neutral-400">Vinculado a: {banner.preorder_campaign.name}</div>
                     )}
                   </Td>
-                  <Td className="text-xs text-neutral-500">
-                    {banner.preorder_campaign ? `/pre-venda/${banner.preorder_campaign.slug}` : (banner.cta_href ?? '-')}
-                  </Td>
+                  <Td className="text-xs text-neutral-500">{banner.cta_href ?? '-'}</Td>
                   <Td>
                     <Badge tone={banner.active ? 'green' : 'neutral'}>{banner.active ? 'Ativo' : 'Inativo'}</Badge>
                   </Td>
@@ -80,13 +77,11 @@ export default async function AdminDestaquesPage() {
       </div>
 
       <Card className="h-fit">
-        <h2 className="mb-4 text-sm font-semibold text-neutral-900">Novo destaque</h2>
-        <HomeBannerForm
-          action={createHomeBanner}
-          linkOptions={linkOptions}
-          preorderCampaigns={preorderCampaigns ?? []}
-          submitLabel="Criar destaque"
-        />
+        <h2 className="text-sm font-semibold text-neutral-900">Novo destaque</h2>
+        <p className="mb-4 mt-1 text-xs text-neutral-500">
+          A imagem é definida depois de salvar, na tela de edição do destaque.
+        </p>
+        <HomeBannerForm action={createHomeBanner} linkOptions={linkOptions} submitLabel="Criar destaque" />
       </Card>
     </div>
   )

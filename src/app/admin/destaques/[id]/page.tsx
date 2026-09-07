@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { HomeBannerForm } from '../HomeBannerForm'
 import { updateHomeBanner } from '../actions'
 import { BannerImageManager } from './BannerImageManager'
+import { ImageSourceSelector } from './ImageSourceSelector'
 import { getHomeBannerLinkOptions } from '@/lib/data/link-options'
 
 export const metadata = { title: 'Editar destaque' }
@@ -31,12 +32,16 @@ export default async function EditHomeBannerPage({ params }: PageProps<'/admin/d
     <div className="max-w-lg space-y-6">
       <Card>
         <h1 className="mb-4 text-lg font-semibold text-neutral-900">Imagens</h1>
+        <ImageSourceSelector
+          bannerId={banner.id}
+          preorderCampaigns={preorderCampaigns ?? []}
+          currentCampaignId={linkedCampaign?.id ?? null}
+        />
         {linkedCampaign ? (
           <p className="text-sm text-neutral-500">
-            Este destaque está vinculado à pré-venda <span className="font-medium text-neutral-700">{linkedCampaign.name}</span>,
-            a imagem é a mesma cadastrada lá.{' '}
+            Usando a imagem cadastrada na pré-venda <span className="font-medium text-neutral-700">{linkedCampaign.name}</span>.{' '}
             <Link href={`/admin/pre-vendas/${linkedCampaign.id}`} className="text-neutral-900 underline">
-              Editar imagem da pré-venda
+              Trocar essa imagem
             </Link>
           </p>
         ) : (
@@ -49,7 +54,6 @@ export default async function EditHomeBannerPage({ params }: PageProps<'/admin/d
         <HomeBannerForm
           action={updateHomeBanner.bind(null, banner.id)}
           linkOptions={linkOptions}
-          preorderCampaigns={preorderCampaigns ?? []}
           defaultValues={banner}
           submitLabel="Salvar alterações"
         />
