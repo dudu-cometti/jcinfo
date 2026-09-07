@@ -78,14 +78,14 @@ export default async function AdminEstoquePage() {
                 movements.map((m) => (
                   <Tr key={m.id}>
                     <Td className="whitespace-nowrap text-xs text-neutral-500">{formatDateTime(m.created_at)}</Td>
-                    <Td>{m.product?.name ?? '—'}</Td>
+                    <Td>{m.product?.name ?? '-'}</Td>
                     <Td>
                       <Badge tone={m.quantity < 0 ? 'red' : 'green'}>{MOVEMENT_LABELS[m.type] ?? m.type}</Badge>
                     </Td>
                     <Td className={m.quantity < 0 ? 'text-red-600' : 'text-green-700'}>
                       {m.quantity > 0 ? `+${m.quantity}` : m.quantity}
                     </Td>
-                    <Td className="text-xs text-neutral-500">{m.reason ?? '—'}</Td>
+                    <Td className="text-xs text-neutral-500">{m.reason ?? '-'}</Td>
                   </Tr>
                 ))
               )}

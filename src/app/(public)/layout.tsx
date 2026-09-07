@@ -4,6 +4,7 @@ import { getSiteSettings } from '@/lib/data/settings'
 
 const NAV_ITEMS = [
   { href: '/produtos', label: 'Produtos' },
+  { href: '/pre-venda', label: 'Pré-vendas' },
   { href: '/campanhas', label: 'Campanhas' },
   { href: '/sorteios', label: 'Sorteios' },
 ]

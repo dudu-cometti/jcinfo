@@ -110,7 +110,7 @@ export function ProductForm({
         <Field label="Preço promocional" htmlFor="promo_price" hint="Deixe em branco se não houver promoção">
           <CurrencyInput id="promo_price" name="promo_price" defaultValue={defaultValues?.promo_price} />
         </Field>
-        <Field label="Custo" htmlFor="cost" hint="Uso interno — só o admin vê isso, não aparece na loja nem para vendedores">
+        <Field label="Custo" htmlFor="cost" hint="Uso interno. Só o admin vê isso, não aparece na loja nem para vendedores">
           <CurrencyInput id="cost" name="cost" defaultValue={defaultValues?.cost} />
         </Field>
       </div>

@@ -407,6 +407,53 @@ export type Database = {
         Insert: { key: string; value: Json }
         Update: Partial<Database['public']['Tables']['site_settings']['Insert']>
       }
+      preorder_campaigns: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          image_url: string | null
+          expected_price: number | null
+          expected_date: string | null
+          discount_percentage: number | null
+          reward_id: string | null
+          status: Database['public']['Enums']['preorder_status']
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          image_url?: string | null
+          expected_price?: number | null
+          expected_date?: string | null
+          discount_percentage?: number | null
+          reward_id?: string | null
+          status?: Database['public']['Enums']['preorder_status']
+        }
+        Update: Partial<Database['public']['Tables']['preorder_campaigns']['Insert']>
+      }
+      preorder_signups: {
+        Row: {
+          id: string
+          campaign_id: string
+          customer_id: string
+          converted: boolean
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          campaign_id: string
+          customer_id: string
+          converted?: boolean
+          notes?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['preorder_signups']['Insert']>
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -462,6 +509,7 @@ export type Database = {
       campaign_status: 'rascunho' | 'ativa' | 'encerrada'
       raffle_status: 'aberto' | 'encerrado' | 'cancelado'
       commission_status: 'pendente' | 'aprovada' | 'paga' | 'cancelada'
+      preorder_status: 'aberta' | 'encerrada' | 'cancelada'
     }
   }
 }

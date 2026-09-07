@@ -129,8 +129,8 @@ export default async function AdminProdutosPage({
                   <div className="font-medium text-neutral-900">{product.name}</div>
                   {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
                 </Td>
-                <Td>{product.category?.name ?? '—'}</Td>
-                <Td>{product.brand?.name ?? '—'}</Td>
+                <Td>{product.category?.name ?? '-'}</Td>
+                <Td>{product.brand?.name ?? '-'}</Td>
                 <Td>
                   {product.promo_price ? (
                     <div>

@@ -87,7 +87,7 @@ export default async function VendedorProdutosPage({ searchParams }: PageProps<'
                     {[product.brand?.name, product.model, product.sku].filter(Boolean).join(' · ')}
                   </div>
                 </Td>
-                <Td>{product.category?.name ?? '—'}</Td>
+                <Td>{product.category?.name ?? '-'}</Td>
                 <Td>
                   {product.promo_price ? (
                     <div>

@@ -71,9 +71,9 @@ export default async function RelatorioVendasPage({ searchParams }: PageProps<'/
           ) : (
             rows.map((sale) => (
               <Tr key={sale.id}>
-                <Td className="text-xs text-neutral-500">{sale.confirmed_at ? formatDateTime(sale.confirmed_at) : '—'}</Td>
-                <Td>{sale.customer?.name ?? '—'}</Td>
-                <Td>{sale.seller?.full_name ?? '—'}</Td>
+                <Td className="text-xs text-neutral-500">{sale.confirmed_at ? formatDateTime(sale.confirmed_at) : '-'}</Td>
+                <Td>{sale.customer?.name ?? '-'}</Td>
+                <Td>{sale.seller?.full_name ?? '-'}</Td>
                 <Td>
                   <Badge tone="green">{sale.status}</Badge>
                 </Td>

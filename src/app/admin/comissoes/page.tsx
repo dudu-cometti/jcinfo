@@ -70,8 +70,8 @@ export default async function AdminComissoesPage({ searchParams }: PageProps<'/a
                   rules.map((rule) => (
                     <Tr key={rule.id}>
                       <Td className="font-medium text-neutral-900">{rule.name}</Td>
-                      <Td>{rule.percentage ? `${rule.percentage}%` : '—'}</Td>
-                      <Td>{rule.fixed_value ? formatBRL(rule.fixed_value) : '—'}</Td>
+                      <Td>{rule.percentage ? `${rule.percentage}%` : '-'}</Td>
+                      <Td>{rule.fixed_value ? formatBRL(rule.fixed_value) : '-'}</Td>
                       <Td className="text-xs text-neutral-500">
                         {rule.period_start ? formatDate(rule.period_start) : '∞'} -{' '}
                         {rule.period_end ? formatDate(rule.period_end) : '∞'}
@@ -143,7 +143,7 @@ export default async function AdminComissoesPage({ searchParams }: PageProps<'/a
               commissionRows.map((c) => (
                 <Tr key={c.id}>
                   <Td className="text-xs text-neutral-500">{formatDate(c.created_at)}</Td>
-                  <Td>{c.seller?.full_name ?? '—'}</Td>
+                  <Td>{c.seller?.full_name ?? '-'}</Td>
                   <Td>{formatBRL(c.sale_amount)}</Td>
                   <Td className="text-xs text-neutral-500">
                     {c.percentage_applied ? `${c.percentage_applied}%` : ''}

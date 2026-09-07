@@ -53,7 +53,7 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
             <h2 className="mb-2 text-sm font-semibold text-green-800">Resultado</h2>
             {winnerRows.map((w) => (
               <p key={w.id} className="text-sm text-green-700">
-                <strong>{w.customer?.name}</strong> ({w.customer?.phone}) — sorteado em{' '}
+                <strong>{w.customer?.name}</strong> ({w.customer?.phone}), sorteado em{' '}
                 {formatDateTime(w.drawn_at)} por {w.drawn_by_profile?.full_name}
               </p>
             ))}

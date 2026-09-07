@@ -68,7 +68,7 @@ export default async function AdminClientesPage({ searchParams }: PageProps<'/ad
                 <Td>{customer.phone}</Td>
                 <Td>{customer.points.toLocaleString('pt-BR')}</Td>
                 <Td>{formatBRL(customer.total_spent)}</Td>
-                <Td>{customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '—'}</Td>
+                <Td>{customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '-'}</Td>
                 <Td>
                   <Badge tone={customer.status === 'ativo' ? 'green' : 'neutral'}>{customer.status}</Badge>
                 </Td>

@@ -76,7 +76,7 @@ export default async function CustomerDetailPage({ params }: PageProps<'/admin/c
           <Card className="p-4">
             <p className="text-xs text-neutral-500">Última compra</p>
             <p className="text-xl font-semibold">
-              {customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '—'}
+              {customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '-'}
             </p>
           </Card>
         </div>
@@ -97,7 +97,7 @@ export default async function CustomerDetailPage({ params }: PageProps<'/admin/c
                 salesRows.map((sale) => (
                   <Tr key={sale.id}>
                     <Td className="text-xs text-neutral-500">{formatDateTime(sale.created_at)}</Td>
-                    <Td>{sale.seller?.full_name ?? '—'}</Td>
+                    <Td>{sale.seller?.full_name ?? '-'}</Td>
                     <Td>
                       <Badge>{sale.status}</Badge>
                     </Td>

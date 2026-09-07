@@ -72,12 +72,12 @@ export async function SaleDetail({ saleId, isAdmin }: { saleId: string; isAdmin:
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs text-neutral-500">Cliente</p>
-          <p className="font-medium text-neutral-900">{saleRow.customer?.name ?? '—'}</p>
+          <p className="font-medium text-neutral-900">{saleRow.customer?.name ?? '-'}</p>
           <p className="text-xs text-neutral-400">{saleRow.customer?.phone}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs text-neutral-500">Vendedor</p>
-          <p className="font-medium text-neutral-900">{saleRow.seller?.full_name ?? '—'}</p>
+          <p className="font-medium text-neutral-900">{saleRow.seller?.full_name ?? '-'}</p>
           <p className="text-xs text-neutral-400">{formatDateTime(saleRow.created_at)}</p>
         </Card>
         <Card className="p-4">

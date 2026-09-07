@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Field, Input } from '@/components/ui/input'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { Button } from '@/components/ui/button'
@@ -26,65 +26,46 @@ export function WhatsAppButton({
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
-  const popupRef = useRef<Window | null>(null)
 
   if (!whatsappNumber) return null
 
-  function openForm() {
-    // Opened synchronously on the click so it isn't blocked as a popup once
-    // the async lead-creation below resolves and sets its location.
-    popupRef.current = window.open('', '_blank')
-    setOpen(true)
-  }
-
-  function closeForm() {
-    popupRef.current?.close()
-    popupRef.current = null
-    setOpen(false)
-    setError(null)
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setPending(true)
-    setError(null)
-
-    const formData = new FormData()
-    formData.set('name', name)
-    formData.set('phone', phone)
-    const result = await createLead(undefined, formData)
-
-    if (result?.error) {
-      setError(result.error)
-      setPending(false)
-      return
-    }
-
-    pushDataLayer({ event: 'lead', product_id: productId, product_name: productName })
-    pushDataLayer({ event: 'contact_whatsapp', product_id: productId, product_name: productName })
 
     const message = encodeURIComponent(`Olá, meu nome é ${name}. Tenho interesse no produto ${productName}.`)
     const href = `https://wa.me/${whatsappNumber}?text=${message}`
 
-    if (popupRef.current) {
-      popupRef.current.location.href = href
-    } else {
-      window.location.href = href
-    }
+    // Navigate immediately, synchronously, inside the submit gesture — never
+    // block the WhatsApp handoff on a network round-trip. A popup opened (or
+    // a redirect fired) after an `await` gets silently blocked/dropped on
+    // most mobile browsers once the original user-gesture window has
+    // passed, which is what caused the blank-tab bug here before.
+    window.open(href, '_blank', 'noopener,noreferrer')
 
-    setPending(false)
     setOpen(false)
     setName('')
     setPhone('')
+
+    // Lead capture is best-effort and happens in the background: if it
+    // fails, the visitor still reaches the seller on WhatsApp, which
+    // matters far more than a perfectly recorded lead row.
+    const formData = new FormData()
+    formData.set('name', name)
+    formData.set('phone', phone)
+    createLead(undefined, formData)
+      .then((result) => {
+        if (result?.error) return
+        pushDataLayer({ event: 'lead', product_id: productId, product_name: productName })
+        pushDataLayer({ event: 'contact_whatsapp', product_id: productId, product_name: productName })
+      })
+      .catch(() => {})
   }
 
   return (
     <>
       <button
         type="button"
-        onClick={openForm}
+        onClick={() => setOpen(true)}
         className={
           className ??
           'inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-green-700'
@@ -115,13 +96,11 @@ export function WhatsAppButton({
                 <PhoneInput id="lead-phone" required value={phone} onChange={setPhone} />
               </Field>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
-
               <div className="flex gap-2 pt-1">
-                <Button type="submit" disabled={pending} className="flex-1 bg-green-600 hover:bg-green-700">
-                  {pending ? 'Abrindo...' : 'Continuar para o WhatsApp'}
+                <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
+                  Continuar para o WhatsApp
                 </Button>
-                <Button type="button" variant="ghost" onClick={closeForm} disabled={pending}>
+                <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                   Cancelar
                 </Button>
               </div>

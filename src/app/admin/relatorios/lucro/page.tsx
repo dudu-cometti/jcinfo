@@ -30,7 +30,7 @@ export default async function RelatorioLucroPage({ searchParams }: PageProps<'/a
         <div>
           <h1 className="text-lg font-semibold text-neutral-900">Lucro</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Baseado no custo cadastrado em cada produto — visível apenas para administradores.
+            Baseado no custo cadastrado em cada produto. Visível apenas para administradores.
           </p>
         </div>
         <div className="flex flex-wrap gap-1 rounded-lg border border-neutral-200 bg-white p-1">
@@ -52,7 +52,7 @@ export default async function RelatorioLucroPage({ searchParams }: PageProps<'/a
         <StatCard label="Faturamento" value={formatBRL(report.totalRevenue)} />
         <StatCard label="Custo" value={formatBRL(report.totalCost)} />
         <StatCard label="Lucro" value={formatBRL(report.totalProfit)} />
-        <StatCard label="Margem" value={report.marginPct !== null ? `${report.marginPct.toFixed(1)}%` : '—'} />
+        <StatCard label="Margem" value={report.marginPct !== null ? `${report.marginPct.toFixed(1)}%` : '-'} />
       </div>
 
       <Table>
@@ -75,7 +75,7 @@ export default async function RelatorioLucroPage({ searchParams }: PageProps<'/a
                 <Td>{formatBRL(p.revenue)}</Td>
                 <Td>{formatBRL(p.cost)}</Td>
                 <Td className={p.profit >= 0 ? 'text-green-700' : 'text-red-600'}>{formatBRL(p.profit)}</Td>
-                <Td>{p.marginPct !== null ? `${p.marginPct.toFixed(1)}%` : '—'}</Td>
+                <Td>{p.marginPct !== null ? `${p.marginPct.toFixed(1)}%` : '-'}</Td>
               </Tr>
             ))
           )}

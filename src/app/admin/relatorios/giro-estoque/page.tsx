@@ -51,7 +51,7 @@ export default async function GiroEstoquePage() {
                         ~{p.daysOfStockLeft} dias
                       </Badge>
                     ) : (
-                      '—'
+                      '-'
                     )}
                   </Td>
                 </Tr>
@@ -65,7 +65,7 @@ export default async function GiroEstoquePage() {
         <h2 className="mb-3 text-sm font-semibold text-neutral-900">Produtos parados (encalhados)</h2>
         <Card className="mb-3 border-yellow-200 bg-yellow-50">
           <p className="text-sm text-yellow-800">
-            Produtos com estoque disponível que não vendem há mais tempo — candidatos a promoção.
+            Produtos com estoque disponível que não vendem há mais tempo. Candidatos a promoção.
           </p>
         </Card>
         <Table>

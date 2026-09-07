@@ -48,7 +48,7 @@ export default async function AdminSorteiosPage() {
               rows.map((raffle) => (
                 <Tr key={raffle.id}>
                   <Td className="font-medium text-neutral-900">{raffle.name}</Td>
-                  <Td>{raffle.reward?.name ?? '—'}</Td>
+                  <Td>{raffle.reward?.name ?? '-'}</Td>
                   <Td className="text-xs text-neutral-500">{formatDateTime(raffle.raffle_date)}</Td>
                   <Td>
                     <Badge tone={STATUS_TONE[raffle.status]}>{raffle.status}</Badge>

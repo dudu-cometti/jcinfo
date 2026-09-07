@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: '/admin/campanhas', label: 'Campanhas' },
   { href: '/admin/premios', label: 'Prêmios' },
   { href: '/admin/sorteios', label: 'Sorteios' },
+  { href: '/admin/pre-vendas', label: 'Pré-vendas' },
   { href: '/admin/vendedores', label: 'Vendedores' },
   { href: '/admin/relatorios', label: 'Relatórios' },
   { href: '/admin/comissoes', label: 'Comissões' },

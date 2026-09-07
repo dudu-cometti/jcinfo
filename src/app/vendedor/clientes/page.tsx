@@ -62,7 +62,7 @@ export default async function VendedorClientesPage({ searchParams }: PageProps<'
                 <Td className="font-medium text-neutral-900">{customer.name}</Td>
                 <Td>{customer.phone}</Td>
                 <Td>{customer.points.toLocaleString('pt-BR')}</Td>
-                <Td>{customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '—'}</Td>
+                <Td>{customer.last_purchase_at ? formatDate(customer.last_purchase_at) : '-'}</Td>
                 <Td>
                   <Link href={`/vendedor/clientes/${customer.id}`} className="text-sm text-neutral-600 hover:underline">
                     Ver

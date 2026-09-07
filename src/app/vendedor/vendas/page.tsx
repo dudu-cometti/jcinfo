@@ -54,7 +54,7 @@ export default async function VendedorVendasPage() {
             rows.map((sale) => (
               <Tr key={sale.id}>
                 <Td className="text-xs text-neutral-500">{formatDateTime(sale.created_at)}</Td>
-                <Td>{sale.customer?.name ?? '—'}</Td>
+                <Td>{sale.customer?.name ?? '-'}</Td>
                 <Td>
                   <Badge tone={STATUS_TONE[sale.status]}>{sale.status}</Badge>
                 </Td>

@@ -89,7 +89,7 @@ export default async function AdminLogsPage({ searchParams }: PageProps<'/admin/
                   {log.resource_id && <span className="text-neutral-400"> #{log.resource_id.slice(0, 8)}</span>}
                 </Td>
                 <Td className="max-w-xs truncate text-xs text-neutral-400" title={JSON.stringify(log.data)}>
-                  {log.data ? JSON.stringify(log.data) : '—'}
+                  {log.data ? JSON.stringify(log.data) : '-'}
                 </Td>
               </Tr>
             ))
