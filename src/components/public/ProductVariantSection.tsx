@@ -37,6 +37,7 @@ export function ProductVariantSection({
   whatsappNumber,
   specs,
   activeCampaigns,
+  knownCustomer,
 }: {
   product: { id: string; name: string; description: string | null; model: string | null; min_stock: number }
   brand: { name: string; slug: string } | null
@@ -49,6 +50,7 @@ export function ProductVariantSection({
   whatsappNumber: string
   specs: { label: string; value: string }[]
   activeCampaigns: CampaignRow[]
+  knownCustomer?: { name: string; phone: string } | null
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(variants[0]?.id ?? null)
   const selected = variants.find((v) => v.id === selectedId) ?? null
@@ -147,6 +149,7 @@ export function ProductVariantSection({
               whatsappNumber={whatsappNumber}
               productId={product.id}
               productName={displayName}
+              knownCustomer={knownCustomer}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 sm:w-auto sm:px-8"
             />
           </div>
@@ -208,6 +211,7 @@ export function ProductVariantSection({
             whatsappNumber={whatsappNumber}
             productId={product.id}
             productName={displayName}
+            knownCustomer={knownCustomer}
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
           />
         </div>

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getSiteSettings } from '@/lib/data/settings'
+import { verifyCustomerSession } from '@/lib/auth/customer-dal'
 import { ProductVariantSection } from '@/components/public/ProductVariantSection'
 import { ProductCard, type ProductCardData } from '@/components/public/ProductCard'
 
@@ -44,7 +45,11 @@ export async function generateMetadata({ params }: PageProps<'/produtos/[slug]'>
 
 export default async function ProductPage({ params }: PageProps<'/produtos/[slug]'>) {
   const { slug } = await params
-  const [product, settings] = await Promise.all([getProduct(slug), getSiteSettings()])
+  const [product, settings, customerSession] = await Promise.all([
+    getProduct(slug),
+    getSiteSettings(),
+    verifyCustomerSession(),
+  ])
   if (!product) notFound()
 
   const supabase = await createClient()
@@ -187,6 +192,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
         whatsappNumber={settings.whatsapp_number}
         specs={specs}
         activeCampaigns={activeCampaigns}
+        knownCustomer={customerSession ? { name: customerSession.name, phone: customerSession.phone } : null}
       />
 
       {relatedProducts.length > 0 && (

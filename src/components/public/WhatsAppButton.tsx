@@ -16,11 +16,14 @@ export function WhatsAppButton({
   whatsappNumber,
   productId,
   productName,
+  knownCustomer,
   className,
 }: {
   whatsappNumber: string
   productId: string
   productName: string
+  /** When the visitor is a logged-in customer, skip asking for name/phone again. */
+  knownCustomer?: { name: string; phone: string } | null
   className?: string
 }) {
   const [open, setOpen] = useState(false)
@@ -29,29 +32,25 @@ export function WhatsAppButton({
 
   if (!whatsappNumber) return null
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-
-    const message = encodeURIComponent(`Olá, meu nome é ${name}. Tenho interesse no produto ${productName}.`)
+  function sendToWhatsApp(customerName: string, customerPhone: string) {
+    const message = encodeURIComponent(`Olá, meu nome é ${customerName}. Tenho interesse no produto ${productName}.`)
     const href = `https://wa.me/${whatsappNumber}?text=${message}`
 
-    // Navigate immediately, synchronously, inside the submit gesture — never
-    // block the WhatsApp handoff on a network round-trip. A popup opened (or
-    // a redirect fired) after an `await` gets silently blocked/dropped on
-    // most mobile browsers once the original user-gesture window has
-    // passed, which is what caused the blank-tab bug here before.
+    // Navigate immediately, synchronously, inside the click/submit gesture —
+    // never block the WhatsApp handoff on a network round-trip. A popup
+    // opened (or a redirect fired) after an `await` gets silently
+    // blocked/dropped on most mobile browsers once the original user-gesture
+    // window has passed, which is what caused the blank-tab bug here before.
     window.open(href, '_blank', 'noopener,noreferrer')
-
-    setOpen(false)
-    setName('')
-    setPhone('')
 
     // Lead capture is best-effort and happens in the background: if it
     // fails, the visitor still reaches the seller on WhatsApp, which
-    // matters far more than a perfectly recorded lead row.
+    // matters far more than a perfectly recorded lead row. For a known
+    // customer this just matches their existing record (createLead
+    // finds-or-creates by phone), so it's safe to always call.
     const formData = new FormData()
-    formData.set('name', name)
-    formData.set('phone', phone)
+    formData.set('name', customerName)
+    formData.set('phone', customerPhone)
     createLead(undefined, formData)
       .then((result) => {
         if (result?.error) return
@@ -61,11 +60,27 @@ export function WhatsAppButton({
       .catch(() => {})
   }
 
+  function handleClick() {
+    if (knownCustomer) {
+      sendToWhatsApp(knownCustomer.name, knownCustomer.phone)
+      return
+    }
+    setOpen(true)
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    sendToWhatsApp(name, phone)
+    setOpen(false)
+    setName('')
+    setPhone('')
+  }
+
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={handleClick}
         className={
           className ??
           'inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-green-700'
