@@ -122,12 +122,63 @@ export async function uploadProductImage(productId: string, formData: FormData) 
 
   const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(path)
 
+  const { data: last } = await supabase
+    .from('product_images')
+    .select('position')
+    .eq('product_id', productId)
+    .order('position', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
   const { error: insertError } = await supabase
     .from('product_images')
-    .insert({ product_id: productId, url: publicUrlData.publicUrl })
+    .insert({ product_id: productId, url: publicUrlData.publicUrl, position: (last?.position ?? -1) + 1 })
 
   if (insertError) {
     return { error: 'Erro ao salvar imagem no produto.' }
+  }
+
+  revalidatePath(`/admin/produtos/${productId}`)
+  return { error: undefined }
+}
+
+/** Uploads a client-cropped replacement and points the same image row at it, so its position in the gallery doesn't change. */
+export async function replaceProductImage(imageId: string, productId: string, formData: FormData) {
+  await requireRole('admin')
+
+  const file = formData.get('file')
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: 'Selecione uma imagem.' }
+  }
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return { error: 'Formato inválido. Use JPG, PNG ou WEBP.' }
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return { error: 'Imagem muito grande (máximo 5MB).' }
+  }
+
+  const supabase = await createClient()
+  const { data: existing } = await supabase.from('product_images').select('url').eq('id', imageId).single()
+
+  const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
+  const path = `${productId}/${crypto.randomUUID()}.${extension}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('product-images')
+    .upload(path, file, { contentType: file.type })
+  if (uploadError) return { error: 'Erro ao enviar imagem.' }
+
+  const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(path)
+
+  const { error: updateError } = await supabase
+    .from('product_images')
+    .update({ url: publicUrlData.publicUrl })
+    .eq('id', imageId)
+  if (updateError) return { error: 'Erro ao salvar imagem cortada.' }
+
+  if (existing?.url) {
+    const oldPath = existing.url.split('/product-images/')[1]
+    if (oldPath) await supabase.storage.from('product-images').remove([oldPath])
   }
 
   revalidatePath(`/admin/produtos/${productId}`)
@@ -150,6 +201,32 @@ export async function deleteProductImage(imageId: string, productId: string) {
     const path = image.url.split('/product-images/')[1]
     if (path) await supabase.storage.from('product-images').remove([path])
   }
+
+  revalidatePath(`/admin/produtos/${productId}`)
+}
+
+export async function moveProductImage(productId: string, imageId: string, direction: 'left' | 'right') {
+  await requireRole('admin')
+
+  const supabase = await createClient()
+  const { data: images } = await supabase
+    .from('product_images')
+    .select('id, position')
+    .eq('product_id', productId)
+    .order('position')
+  if (!images) return
+
+  const index = images.findIndex((img) => img.id === imageId)
+  const targetIndex = direction === 'left' ? index - 1 : index + 1
+  if (index === -1 || targetIndex < 0 || targetIndex >= images.length) return
+
+  const current = images[index]
+  const target = images[targetIndex]
+
+  await Promise.all([
+    supabase.from('product_images').update({ position: target.position }).eq('id', current.id),
+    supabase.from('product_images').update({ position: current.position }).eq('id', target.id),
+  ])
 
   revalidatePath(`/admin/produtos/${productId}`)
 }
