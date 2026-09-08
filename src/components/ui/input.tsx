@@ -8,7 +8,7 @@ export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInp
   return (
     <input
       className={cn(
-        `w-full rounded-lg border border-neutral-300 px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
+        `w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
         className,
       )}
       {...props}
@@ -23,7 +23,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        `w-full rounded-lg border border-neutral-300 px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
+        `w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 ${FIELD_TEXT_SIZE} text-neutral-900 focus:border-neutral-500 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400`,
         className,
       )}
       {...props}
