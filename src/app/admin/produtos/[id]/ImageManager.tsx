@@ -14,7 +14,15 @@ function blobToFile(blob: Blob, filename: string) {
   return new File([blob], filename, { type: blob.type })
 }
 
-export function ImageManager({ productId, images }: { productId: string; images: ProductImage[] }) {
+export function ImageManager({
+  productId,
+  images,
+  variantId,
+}: {
+  productId: string
+  images: ProductImage[]
+  variantId?: string
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [cropTarget, setCropTarget] = useState<CropTarget | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -46,7 +54,7 @@ export function ImageManager({ productId, images }: { productId: string; images:
 
     const result =
       cropTarget.kind === 'new'
-        ? await uploadProductImage(productId, formData)
+        ? await uploadProductImage(productId, formData, variantId)
         : await replaceProductImage(cropTarget.imageId, productId, formData)
 
     setPending(false)
@@ -65,7 +73,7 @@ export function ImageManager({ productId, images }: { productId: string; images:
             <Image src={image.url} alt="" fill sizes="200px" className="object-cover" />
 
             <div className="absolute inset-x-0 top-0 flex items-center justify-between p-1 opacity-0 transition group-hover:opacity-100">
-              <form action={() => moveProductImage(productId, image.id, 'left')}>
+              <form action={() => moveProductImage(productId, image.id, 'left', variantId)}>
                 <button
                   type="submit"
                   disabled={index === 0}
@@ -75,7 +83,7 @@ export function ImageManager({ productId, images }: { productId: string; images:
                   <ChevronLeftIcon className="h-3.5 w-3.5" />
                 </button>
               </form>
-              <form action={() => moveProductImage(productId, image.id, 'right')}>
+              <form action={() => moveProductImage(productId, image.id, 'right', variantId)}>
                 <button
                   type="submit"
                   disabled={index === images.length - 1}

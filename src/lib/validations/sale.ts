@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const saleItemSchema = z.object({
   product_id: z.uuid(),
+  variant_id: z.uuid().nullable().optional(),
   quantity: z.number().int().positive(),
 })
 

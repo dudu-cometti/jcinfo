@@ -25,6 +25,7 @@ type ProductDefaults = {
   internal_code: string | null
   status: 'ativo' | 'inativo'
   featured: boolean
+  condition: 'novo' | 'seminovo'
 }
 
 export function ProductForm({
@@ -32,17 +33,21 @@ export function ProductForm({
   categories,
   brands,
   defaultValues,
+  hasVariants = false,
   submitLabel,
 }: {
   action: ProductFormAction
   categories: { id: string; name: string }[]
   brands: { id: string; name: string }[]
   defaultValues?: ProductDefaults
+  hasVariants?: boolean
   submitLabel: string
 }) {
   const [state, formAction, pending] = useActionState(action, undefined)
   const [slug, setSlug] = useState(defaultValues?.slug ?? '')
   const [slugTouched, setSlugTouched] = useState(Boolean(defaultValues))
+  const [condition, setCondition] = useState(defaultValues?.condition ?? 'seminovo')
+  const pricingLocked = condition === 'novo' && hasVariants
 
   return (
     <form action={formAction} className="space-y-6">
@@ -103,12 +108,44 @@ export function ProductForm({
         </Field>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Field label="Preço" htmlFor="price">
-          <CurrencyInput id="price" name="price" required defaultValue={defaultValues?.price} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Field
+          label="Condição"
+          htmlFor="condition"
+          hint={
+            condition === 'novo'
+              ? 'Produto novo pode ter várias cores, cada uma com seu próprio estoque e preço.'
+              : 'Aparelho único: uma cor, um estoque. Ex: seminovo ou item avulso.'
+          }
+        >
+          <Select id="condition" name="condition" value={condition} onChange={(e) => setCondition(e.target.value as 'novo' | 'seminovo')}>
+            <option value="seminovo">Seminovo</option>
+            <option value="novo">Novo</option>
+          </Select>
         </Field>
-        <Field label="Preço promocional" htmlFor="promo_price" hint="Deixe em branco se não houver promoção">
-          <CurrencyInput id="promo_price" name="promo_price" defaultValue={defaultValues?.promo_price} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Field
+          label="Preço"
+          htmlFor="price"
+          hint={pricingLocked ? 'Controlado pelas cores cadastradas abaixo.' : undefined}
+        >
+          <CurrencyInput
+            id="price"
+            name="price"
+            required
+            defaultValue={defaultValues?.price}
+            className={pricingLocked ? 'bg-neutral-50 text-neutral-400' : undefined}
+          />
+        </Field>
+        <Field label="Preço promocional" htmlFor="promo_price" hint={pricingLocked ? 'Controlado pelas cores cadastradas abaixo.' : 'Deixe em branco se não houver promoção'}>
+          <CurrencyInput
+            id="promo_price"
+            name="promo_price"
+            defaultValue={defaultValues?.promo_price}
+            className={pricingLocked ? 'bg-neutral-50 text-neutral-400' : undefined}
+          />
         </Field>
         <Field label="Custo" htmlFor="cost" hint="Uso interno. Só o admin vê isso, não aparece na loja nem para vendedores">
           <CurrencyInput id="cost" name="cost" defaultValue={defaultValues?.cost} />
@@ -116,8 +153,17 @@ export function ProductForm({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Field label="Estoque" htmlFor="stock">
-          <Input id="stock" name="stock" type="number" min="0" required defaultValue={defaultValues?.stock ?? 0} />
+        <Field label="Estoque" htmlFor="stock" hint={pricingLocked ? 'Controlado pelas cores cadastradas abaixo.' : undefined}>
+          <Input
+            id="stock"
+            name="stock"
+            type="number"
+            min="0"
+            required
+            readOnly={pricingLocked}
+            defaultValue={defaultValues?.stock ?? 0}
+            className={pricingLocked ? 'bg-neutral-50 text-neutral-400' : undefined}
+          />
         </Field>
         <Field label="Estoque mínimo" htmlFor="min_stock">
           <Input id="min_stock" name="min_stock" type="number" min="0" required defaultValue={defaultValues?.min_stock ?? 0} />

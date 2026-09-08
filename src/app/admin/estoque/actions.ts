@@ -13,6 +13,7 @@ export async function registerStockAdjustment(
 
   const validated = stockAdjustmentSchema.safeParse({
     product_id: formData.get('product_id'),
+    variant_id: formData.get('variant_id'),
     type: formData.get('type'),
     quantity: formData.get('quantity'),
     reason: formData.get('reason'),
@@ -27,10 +28,17 @@ export async function registerStockAdjustment(
     p_type: validated.data.type,
     p_quantity: validated.data.quantity,
     p_reason: validated.data.reason,
+    p_variant_id: validated.data.variant_id,
   })
 
   if (error) {
-    return { error: error.message.includes('insufficient stock') ? 'Estoque insuficiente para esta movimentação.' : 'Erro ao registrar movimentação.' }
+    return {
+      error: error.message.includes('insufficient stock')
+        ? 'Estoque insuficiente para esta movimentação.'
+        : error.message.includes('color variants')
+          ? 'Este produto tem cores cadastradas: escolha uma.'
+          : 'Erro ao registrar movimentação.',
+    }
   }
 
   revalidatePath('/admin/estoque')

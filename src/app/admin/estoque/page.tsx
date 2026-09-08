@@ -34,12 +34,20 @@ export default async function AdminEstoquePage() {
       .select('id, type, quantity, reason, created_at, product:products(name)')
       .order('created_at', { ascending: false })
       .limit(50),
-    supabase.from('products').select('id, name, sku').eq('status', 'ativo').order('name'),
+    supabase
+      .from('products')
+      .select('id, name, sku, variants:product_variants(id, color_name, status)')
+      .eq('status', 'ativo')
+      .order('name'),
     supabase.from('products').select('id, name, stock, min_stock').eq('status', 'ativo'),
   ])
 
   const movements = (movementsData ?? []) as unknown as MovementRow[]
   const lowStock = (lowStockProducts ?? []).filter((p) => p.stock <= p.min_stock)
+  const productsWithVariants = (products ?? []).map((p) => ({
+    ...p,
+    variants: (p.variants ?? []).filter((v) => v.status === 'ativo'),
+  }))
 
   return (
     <div className="space-y-6">
@@ -95,7 +103,7 @@ export default async function AdminEstoquePage() {
 
         <Card className="h-fit">
           <h2 className="mb-4 text-sm font-semibold text-neutral-900">Nova movimentação manual</h2>
-          <StockAdjustmentForm products={products ?? []} />
+          <StockAdjustmentForm products={productsWithVariants} />
         </Card>
       </div>
     </div>

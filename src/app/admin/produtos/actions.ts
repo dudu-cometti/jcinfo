@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { requireRole } from '@/lib/auth/dal'
 import { createClient } from '@/lib/supabase/server'
 import { parseProductFormData, type ProductFormState } from '@/lib/validations/product'
+import { parseProductVariantFormData, type ProductVariantFormState } from '@/lib/validations/product-variant'
 
 export async function createProduct(
   _prevState: ProductFormState,
@@ -54,7 +55,25 @@ export async function updateProduct(
   }
 
   const supabase = await createClient()
-  const { error } = await supabase.from('products').update(validated.data).eq('id', productId)
+
+  // Novo products with color variants have their price/promo_price/stock
+  // maintained by a DB trigger from the variants (sync_product_from_variants,
+  // migration 20260101000029) — writing the form's stale copies of those
+  // fields here would clobber that aggregate until the next variant edit.
+  const updateData: Record<string, unknown> = { ...validated.data }
+  if (validated.data.condition === 'novo') {
+    const { count } = await supabase
+      .from('product_variants')
+      .select('id', { count: 'exact', head: true })
+      .eq('product_id', productId)
+    if ((count ?? 0) > 0) {
+      delete updateData.price
+      delete updateData.promo_price
+      delete updateData.stock
+    }
+  }
+
+  const { error } = await supabase.from('products').update(updateData).eq('id', productId)
 
   if (error) {
     return {
@@ -94,7 +113,7 @@ export async function setProductStatus(productId: string, status: 'ativo' | 'ina
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
-export async function uploadProductImage(productId: string, formData: FormData) {
+export async function uploadProductImage(productId: string, formData: FormData, variantId?: string) {
   await requireRole('admin')
 
   const file = formData.get('file')
@@ -110,7 +129,9 @@ export async function uploadProductImage(productId: string, formData: FormData) 
 
   const supabase = await createClient()
   const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
-  const path = `${productId}/${crypto.randomUUID()}.${extension}`
+  const path = variantId
+    ? `${productId}/variants/${variantId}/${crypto.randomUUID()}.${extension}`
+    : `${productId}/${crypto.randomUUID()}.${extension}`
 
   const { error: uploadError } = await supabase.storage
     .from('product-images')
@@ -122,17 +143,21 @@ export async function uploadProductImage(productId: string, formData: FormData) 
 
   const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(path)
 
-  const { data: last } = await supabase
+  let positionQuery = supabase
     .from('product_images')
     .select('position')
     .eq('product_id', productId)
     .order('position', { ascending: false })
     .limit(1)
-    .maybeSingle()
+  positionQuery = variantId ? positionQuery.eq('variant_id', variantId) : positionQuery.is('variant_id', null)
+  const { data: last } = await positionQuery.maybeSingle()
 
-  const { error: insertError } = await supabase
-    .from('product_images')
-    .insert({ product_id: productId, url: publicUrlData.publicUrl, position: (last?.position ?? -1) + 1 })
+  const { error: insertError } = await supabase.from('product_images').insert({
+    product_id: productId,
+    variant_id: variantId ?? null,
+    url: publicUrlData.publicUrl,
+    position: (last?.position ?? -1) + 1,
+  })
 
   if (insertError) {
     return { error: 'Erro ao salvar imagem no produto.' }
@@ -205,15 +230,18 @@ export async function deleteProductImage(imageId: string, productId: string) {
   revalidatePath(`/admin/produtos/${productId}`)
 }
 
-export async function moveProductImage(productId: string, imageId: string, direction: 'left' | 'right') {
+export async function moveProductImage(
+  productId: string,
+  imageId: string,
+  direction: 'left' | 'right',
+  variantId?: string,
+) {
   await requireRole('admin')
 
   const supabase = await createClient()
-  const { data: images } = await supabase
-    .from('product_images')
-    .select('id, position')
-    .eq('product_id', productId)
-    .order('position')
+  let query = supabase.from('product_images').select('id, position').eq('product_id', productId).order('position')
+  query = variantId ? query.eq('variant_id', variantId) : query.is('variant_id', null)
+  const { data: images } = await query
   if (!images) return
 
   const index = images.findIndex((img) => img.id === imageId)
@@ -226,6 +254,98 @@ export async function moveProductImage(productId: string, imageId: string, direc
   await Promise.all([
     supabase.from('product_images').update({ position: target.position }).eq('id', current.id),
     supabase.from('product_images').update({ position: current.position }).eq('id', target.id),
+  ])
+
+  revalidatePath(`/admin/produtos/${productId}`)
+}
+
+export async function createProductVariant(
+  productId: string,
+  _prevState: ProductVariantFormState,
+  formData: FormData,
+): Promise<ProductVariantFormState> {
+  await requireRole('admin')
+
+  const validated = parseProductVariantFormData(formData)
+  if (!validated.success) {
+    return { error: validated.error.issues[0]?.message ?? 'Dados inválidos.' }
+  }
+
+  const supabase = await createClient()
+  const { data: last } = await supabase
+    .from('product_variants')
+    .select('position')
+    .eq('product_id', productId)
+    .order('position', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const { error } = await supabase
+    .from('product_variants')
+    .insert({ ...validated.data, product_id: productId, position: (last?.position ?? -1) + 1 })
+
+  if (error) return { error: 'Erro ao criar cor.' }
+
+  revalidatePath(`/admin/produtos/${productId}`)
+  revalidatePath('/admin/produtos')
+  return { error: undefined }
+}
+
+export async function updateProductVariant(
+  variantId: string,
+  productId: string,
+  _prevState: ProductVariantFormState,
+  formData: FormData,
+): Promise<ProductVariantFormState> {
+  await requireRole('admin')
+
+  const validated = parseProductVariantFormData(formData)
+  if (!validated.success) {
+    return { error: validated.error.issues[0]?.message ?? 'Dados inválidos.' }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.from('product_variants').update(validated.data).eq('id', variantId)
+  if (error) return { error: 'Erro ao salvar cor.' }
+
+  revalidatePath(`/admin/produtos/${productId}`)
+  revalidatePath('/admin/produtos')
+  return { error: undefined }
+}
+
+export async function deleteProductVariant(variantId: string, productId: string) {
+  await requireRole('admin')
+
+  const supabase = await createClient()
+  const { error } = await supabase.from('product_variants').delete().eq('id', variantId)
+  if (error) return { error: 'Não é possível excluir uma cor com vendas registradas. Desative-a em vez disso.' }
+
+  revalidatePath(`/admin/produtos/${productId}`)
+  revalidatePath('/admin/produtos')
+  return { error: undefined }
+}
+
+export async function moveProductVariant(productId: string, variantId: string, direction: 'up' | 'down') {
+  await requireRole('admin')
+
+  const supabase = await createClient()
+  const { data: variants } = await supabase
+    .from('product_variants')
+    .select('id, position')
+    .eq('product_id', productId)
+    .order('position')
+  if (!variants) return
+
+  const index = variants.findIndex((v) => v.id === variantId)
+  const targetIndex = direction === 'up' ? index - 1 : index + 1
+  if (index === -1 || targetIndex < 0 || targetIndex >= variants.length) return
+
+  const current = variants[index]
+  const target = variants[targetIndex]
+
+  await Promise.all([
+    supabase.from('product_variants').update({ position: target.position }).eq('id', current.id),
+    supabase.from('product_variants').update({ position: current.position }).eq('id', target.id),
   ])
 
   revalidatePath(`/admin/produtos/${productId}`)

@@ -29,6 +29,7 @@ export const productSchema = z
     internal_code: optionalString,
     status: z.enum(['ativo', 'inativo']),
     featured: z.coerce.boolean(),
+    condition: z.enum(['novo', 'seminovo']),
   })
   .refine((data) => data.promo_price === null || data.promo_price < data.price, {
     error: 'O preço promocional deve ser menor que o preço original.',
@@ -54,5 +55,6 @@ export function parseProductFormData(formData: FormData) {
     internal_code: formData.get('internal_code'),
     status: formData.get('status'),
     featured: formData.get('featured') === 'on',
+    condition: formData.get('condition'),
   })
 }

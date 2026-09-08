@@ -17,6 +17,7 @@ const base = {
   internal_code: '',
   status: 'ativo' as const,
   featured: false,
+  condition: 'seminovo' as const,
 }
 
 describe('productSchema', () => {

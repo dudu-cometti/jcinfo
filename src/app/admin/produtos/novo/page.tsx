@@ -16,7 +16,7 @@ export default async function NewProductPage() {
     <Card className="max-w-3xl">
       <h1 className="text-lg font-semibold text-neutral-900">Novo produto</h1>
       <p className="mb-6 mt-1 text-sm text-neutral-500">
-        As fotos são adicionadas depois de salvar, na tela de edição do produto.
+        As fotos e as cores (para produtos novos) são adicionadas depois de salvar, na tela de edição do produto.
       </p>
       <ProductForm
         action={createProduct}

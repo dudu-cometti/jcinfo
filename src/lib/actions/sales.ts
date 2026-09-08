@@ -13,7 +13,7 @@ import { createSaleSchema, type CreateSaleState, type SaleActionState } from '@/
  */
 export async function createSale(
   customerId: string,
-  items: { product_id: string; quantity: number }[],
+  items: { product_id: string; variant_id?: string | null; quantity: number }[],
   discount: number,
   notes: string,
 ): Promise<CreateSaleState> {
@@ -103,8 +103,9 @@ export async function reverseSaleAction(saleId: string, reason: string): Promise
 
 function translateSaleError(message: string): string {
   if (message.includes('insufficient stock')) return 'Estoque insuficiente para um ou mais produtos.'
-  if (message.includes('not found')) return 'Cliente ou produto não encontrado.'
-  if (message.includes('is not active')) return 'Um dos produtos selecionados está inativo.'
+  if (message.includes('select a color')) return 'Selecione a cor de um dos produtos adicionados.'
+  if (message.includes('not found')) return 'Cliente, produto ou cor não encontrado.'
+  if (message.includes('is not active')) return 'Um dos produtos ou cores selecionados está inativo.'
   if (message.includes('not pendente')) return 'Esta venda não está mais pendente.'
   if (message.includes('must be confirmada')) return 'A venda precisa estar confirmada antes de ser concluída.'
   if (message.includes('reason is required')) return 'Informe o motivo.'
