@@ -64,6 +64,12 @@ export default async function AdminSorteiosPage() {
                   </Td>
                   <Td>
                     <div className="flex items-center justify-end gap-3">
+                      <Link
+                        href={`/admin/sorteios/${raffle.id}#participantes`}
+                        className="text-sm text-neutral-600 hover:underline"
+                      >
+                        Ver inscritos
+                      </Link>
                       <a
                         href={`/sorteios#${raffle.id}`}
                         target="_blank"

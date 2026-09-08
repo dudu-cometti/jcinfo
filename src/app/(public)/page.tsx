@@ -12,7 +12,7 @@ export default async function HomePage() {
       supabase
         .from('home_banners')
         .select(
-          'id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile, show_text_overlay, preorder_campaign:preorder_campaigns(image_url, image_url_mobile)',
+          'id, title, subtitle, cta_label, cta_href, image_url, image_url_mobile, show_text_overlay, preorder_campaign:preorder_campaigns(image_url, image_url_mobile), raffle:raffles(image_url)',
         )
         .eq('active', true)
         .order('position'),
@@ -49,11 +49,15 @@ export default async function HomePage() {
     image_url_mobile: string | null
     show_text_overlay: boolean
     preorder_campaign: { image_url: string | null; image_url_mobile: string | null } | null
+    raffle: { image_url: string | null } | null
   }
   const resolvedBanners = ((banners ?? []) as unknown as RawBanner[]).map((banner) => {
-    const linked = banner.preorder_campaign
-    if (!linked) return banner
-    const linkedImage = linked.image_url_mobile ?? linked.image_url
+    const linkedImage = banner.preorder_campaign
+      ? (banner.preorder_campaign.image_url_mobile ?? banner.preorder_campaign.image_url)
+      : banner.raffle
+        ? banner.raffle.image_url
+        : null
+    if (!linkedImage) return banner
     return {
       ...banner,
       image_url: linkedImage,

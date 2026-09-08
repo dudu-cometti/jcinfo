@@ -74,6 +74,64 @@ export async function addRaffleEntry(raffleId: string, customerId: string) {
   return { error: undefined }
 }
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
+/** Reuses the `product-images` bucket under a `raffles/` prefix, same reasoning as uploadPreorderCampaignImage. */
+export async function uploadRaffleImage(raffleId: string, formData: FormData) {
+  await requireRole('admin')
+
+  const file = formData.get('file')
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: 'Selecione uma imagem.' }
+  }
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return { error: 'Formato inválido. Use JPG, PNG ou WEBP.' }
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return { error: 'Imagem muito grande (máximo 5MB).' }
+  }
+
+  const supabase = await createClient()
+  const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
+  const path = `raffles/${raffleId}/image_url-${crypto.randomUUID()}.${extension}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('product-images')
+    .upload(path, file, { contentType: file.type })
+  if (uploadError) return { error: 'Erro ao enviar imagem.' }
+
+  const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(path)
+
+  const { error: updateError } = await supabase
+    .from('raffles')
+    .update({ image_url: publicUrlData.publicUrl })
+    .eq('id', raffleId)
+  if (updateError) return { error: 'Erro ao salvar imagem no sorteio.' }
+
+  revalidatePath(`/admin/sorteios/${raffleId}`)
+  revalidatePath('/sorteios')
+  return { error: undefined }
+}
+
+export async function removeRaffleImage(raffleId: string) {
+  await requireRole('admin')
+
+  const supabase = await createClient()
+  const { data: raffle } = await supabase.from('raffles').select('image_url').eq('id', raffleId).single()
+  const currentUrl = raffle?.image_url
+
+  await supabase.from('raffles').update({ image_url: null }).eq('id', raffleId)
+
+  if (currentUrl) {
+    const path = currentUrl.split('/product-images/')[1]
+    if (path) await supabase.storage.from('product-images').remove([path])
+  }
+
+  revalidatePath(`/admin/sorteios/${raffleId}`)
+  revalidatePath('/sorteios')
+}
+
 export async function drawRaffleWinner(raffleId: string) {
   await requireRole('admin')
 

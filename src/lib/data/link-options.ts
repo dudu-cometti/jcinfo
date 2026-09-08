@@ -16,10 +16,11 @@ const STATIC_PAGES: LinkOptionGroup = {
 export async function getHomeBannerLinkOptions(): Promise<LinkOptionGroup[]> {
   const supabase = await createClient()
 
-  const [{ data: categories }, { data: brands }, { data: preorders }] = await Promise.all([
+  const [{ data: categories }, { data: brands }, { data: preorders }, { data: raffles }] = await Promise.all([
     supabase.from('categories').select('name, slug').order('name'),
     supabase.from('brands').select('name, slug').order('name'),
     supabase.from('preorder_campaigns').select('name, slug, status').order('created_at', { ascending: false }),
+    supabase.from('raffles').select('id, name, status').order('created_at', { ascending: false }),
   ])
 
   return [
@@ -37,6 +38,13 @@ export async function getHomeBannerLinkOptions(): Promise<LinkOptionGroup[]> {
       items: (preorders ?? []).map((p) => ({
         label: p.status === 'aberta' ? p.name : `${p.name} (${p.status})`,
         value: `/pre-venda/${p.slug}`,
+      })),
+    },
+    {
+      group: 'Sorteios',
+      items: (raffles ?? []).map((r) => ({
+        label: r.status === 'aberto' ? r.name : `${r.name} (${r.status})`,
+        value: `/sorteios#${r.id}`,
       })),
     },
   ]

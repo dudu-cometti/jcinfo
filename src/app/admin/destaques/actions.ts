@@ -100,14 +100,19 @@ export async function toggleHomeBannerActive(bannerId: string, active: boolean) 
   revalidatePath('/')
 }
 
-/** Escolhe se a imagem do destaque vem de upload próprio (null) ou é reaproveitada de uma pré-venda. */
-export async function setHomeBannerPreorderCampaign(bannerId: string, preorderCampaignId: string | null) {
+export type HomeBannerImageSource = { type: 'preorder' | 'raffle'; id: string } | null
+
+/** Escolhe se a imagem do destaque vem de upload próprio (null) ou é reaproveitada de uma pré-venda/sorteio. */
+export async function setHomeBannerImageSource(bannerId: string, source: HomeBannerImageSource) {
   await requireRole('admin')
 
   const supabase = await createClient()
   const { error } = await supabase
     .from('home_banners')
-    .update({ preorder_campaign_id: preorderCampaignId })
+    .update({
+      preorder_campaign_id: source?.type === 'preorder' ? source.id : null,
+      raffle_id: source?.type === 'raffle' ? source.id : null,
+    })
     .eq('id', bannerId)
   if (error) return { error: 'Erro ao definir a origem da imagem.' }
 

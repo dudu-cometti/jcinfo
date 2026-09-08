@@ -8,6 +8,7 @@ import { formatDateTime } from '@/lib/utils'
 import { RaffleForm } from '../RaffleForm'
 import { RaffleEntryForm } from './RaffleEntryForm'
 import { DrawWinnerButton } from './DrawWinnerButton'
+import { RaffleImageManager } from './RaffleImageManager'
 import { updateRaffle } from '@/lib/actions/raffles'
 
 export const metadata = { title: 'Sorteio' }
@@ -83,7 +84,7 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
           </Card>
         )}
 
-        <Card>
+        <Card id="participantes" className="scroll-mt-4">
           <h2 className="mb-3 text-sm font-semibold text-neutral-900">Participantes ({entryRows.length})</h2>
           {raffle.status === 'aberto' && (
             <div className="mb-4">
@@ -113,16 +114,23 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
         </Card>
       </div>
 
-      <Card className="h-fit">
-        <h2 className="mb-4 text-sm font-semibold text-neutral-900">Editar sorteio</h2>
-        <RaffleForm
-          action={updateRaffle.bind(null, raffle.id)}
-          rewards={rewards ?? []}
-          campaigns={campaigns ?? []}
-          defaultValues={raffle}
-          submitLabel="Salvar alterações"
-        />
-      </Card>
+      <div className="h-fit space-y-6">
+        <Card>
+          <h2 className="mb-4 text-sm font-semibold text-neutral-900">Imagem</h2>
+          <RaffleImageManager raffleId={raffle.id} imageUrl={raffle.image_url} />
+        </Card>
+
+        <Card>
+          <h2 className="mb-4 text-sm font-semibold text-neutral-900">Editar sorteio</h2>
+          <RaffleForm
+            action={updateRaffle.bind(null, raffle.id)}
+            rewards={rewards ?? []}
+            campaigns={campaigns ?? []}
+            defaultValues={raffle}
+            submitLabel="Salvar alterações"
+          />
+        </Card>
+      </div>
     </div>
   )
 }

@@ -58,6 +58,12 @@ export default async function AdminPreVendasPage() {
                   </Td>
                   <Td>
                     <div className="flex items-center justify-end gap-3">
+                      <Link
+                        href={`/admin/pre-vendas/${campaign.id}#inscritos`}
+                        className="text-sm text-neutral-600 hover:underline"
+                      >
+                        Ver inscritos
+                      </Link>
                       <a
                         href={`/pre-venda/${campaign.slug}`}
                         target="_blank"

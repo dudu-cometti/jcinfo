@@ -15,7 +15,7 @@ export default async function AdminDestaquesPage() {
   const [{ data: banners }, linkOptions] = await Promise.all([
     supabase
       .from('home_banners')
-      .select('*, preorder_campaign:preorder_campaigns(name)')
+      .select('*, preorder_campaign:preorder_campaigns(name), raffle:raffles(name)')
       .order('position'),
     getHomeBannerLinkOptions(),
   ])
@@ -26,6 +26,7 @@ export default async function AdminDestaquesPage() {
     cta_href: string | null
     active: boolean
     preorder_campaign: { name: string } | null
+    raffle: { name: string } | null
   }
   const rows = (banners ?? []) as unknown as BannerRow[]
 
@@ -55,6 +56,9 @@ export default async function AdminDestaquesPage() {
                     </Link>
                     {banner.preorder_campaign && (
                       <div className="text-xs text-neutral-400">Vinculado a: {banner.preorder_campaign.name}</div>
+                    )}
+                    {banner.raffle && (
+                      <div className="text-xs text-neutral-400">Vinculado a: {banner.raffle.name}</div>
                     )}
                   </Td>
                   <Td className="text-xs text-neutral-500">{banner.cta_href ?? '-'}</Td>

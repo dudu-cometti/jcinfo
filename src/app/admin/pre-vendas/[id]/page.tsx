@@ -61,7 +61,7 @@ export default async function EditPreorderCampaignPage({
           <CopyLinkButton path={`/pre-venda/${campaign.slug}`} />
         </div>
 
-        <Card>
+        <Card id="inscritos" className="scroll-mt-4">
           <h2 className="mb-3 text-sm font-semibold text-neutral-900">
             Inscritos ({signupRows.length})
           </h2>

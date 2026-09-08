@@ -7,26 +7,35 @@ import { updateHomeBanner } from '../actions'
 import { BannerImageManager } from './BannerImageManager'
 import { ImageSourceSelector } from './ImageSourceSelector'
 import { getHomeBannerLinkOptions } from '@/lib/data/link-options'
+import type { HomeBannerImageSource } from '../actions'
 
 export const metadata = { title: 'Editar destaque' }
 
 export default async function EditHomeBannerPage({ params }: PageProps<'/admin/destaques/[id]'>) {
   const { id } = await params
   const supabase = await createClient()
-  const [{ data: banner }, linkOptions, { data: preorderCampaigns }] = await Promise.all([
+  const [{ data: banner }, linkOptions, { data: preorderCampaigns }, { data: raffles }] = await Promise.all([
     supabase
       .from('home_banners')
-      .select('*, preorder_campaign:preorder_campaigns(id, name)')
+      .select('*, preorder_campaign:preorder_campaigns(id, name), raffle:raffles(id, name)')
       .eq('id', id)
       .single(),
     getHomeBannerLinkOptions(),
     supabase.from('preorder_campaigns').select('id, name, status').order('created_at', { ascending: false }),
+    supabase.from('raffles').select('id, name, status').order('created_at', { ascending: false }),
   ])
 
   if (!banner) notFound()
 
-  type LinkedCampaign = { id: string; name: string } | null
-  const linkedCampaign = banner.preorder_campaign as unknown as LinkedCampaign
+  type LinkedEntity = { id: string; name: string } | null
+  const linkedCampaign = banner.preorder_campaign as unknown as LinkedEntity
+  const linkedRaffle = banner.raffle as unknown as LinkedEntity
+
+  const currentSource: HomeBannerImageSource = linkedCampaign
+    ? { type: 'preorder', id: linkedCampaign.id }
+    : linkedRaffle
+      ? { type: 'raffle', id: linkedRaffle.id }
+      : null
 
   return (
     <div className="max-w-lg space-y-6">
@@ -35,12 +44,20 @@ export default async function EditHomeBannerPage({ params }: PageProps<'/admin/d
         <ImageSourceSelector
           bannerId={banner.id}
           preorderCampaigns={preorderCampaigns ?? []}
-          currentCampaignId={linkedCampaign?.id ?? null}
+          raffles={raffles ?? []}
+          currentSource={currentSource}
         />
         {linkedCampaign ? (
           <p className="text-sm text-neutral-500">
             Usando a imagem cadastrada na pré-venda <span className="font-medium text-neutral-700">{linkedCampaign.name}</span>.{' '}
             <Link href={`/admin/pre-vendas/${linkedCampaign.id}`} className="text-neutral-900 underline">
+              Trocar essa imagem
+            </Link>
+          </p>
+        ) : linkedRaffle ? (
+          <p className="text-sm text-neutral-500">
+            Usando a imagem cadastrada no sorteio <span className="font-medium text-neutral-700">{linkedRaffle.name}</span>.{' '}
+            <Link href={`/admin/sorteios/${linkedRaffle.id}`} className="text-neutral-900 underline">
               Trocar essa imagem
             </Link>
           </p>
