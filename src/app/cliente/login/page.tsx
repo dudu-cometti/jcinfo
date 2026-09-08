@@ -18,6 +18,13 @@ export default function CustomerLoginPage() {
             <Image src="/logo.jpg" alt="JC Info" width={170} height={50} priority className="h-10 w-auto" />
           </Link>
 
+          <Link
+            href="/produtos"
+            className="mb-6 flex w-full items-center justify-center rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50"
+          >
+            Ver produtos
+          </Link>
+
           <h1 className="text-xl font-semibold text-neutral-900">Entrar</h1>
           <p className="mt-1 text-sm text-neutral-500">Acesse sua conta para ver seus pontos e compras.</p>
 
