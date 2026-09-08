@@ -5,7 +5,10 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'JC Info',
     short_name: 'JC Info',
     start_url: '/',
-    display: 'standalone',
+    // 'browser' (not 'standalone') keeps Chrome/Android from treating this
+    // as an installable app and showing the "Instalar" banner — this is a
+    // store site, not meant to be added to the home screen as its own app.
+    display: 'browser',
     background_color: '#ffffff',
     theme_color: '#17599f',
     icons: [
