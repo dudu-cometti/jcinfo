@@ -72,7 +72,7 @@ export function ImageManager({
           <div key={image.id} className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200">
             <Image src={image.url} alt="" fill sizes="200px" className="object-cover" />
 
-            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-1 opacity-0 transition group-hover:opacity-100">
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-gradient-to-b from-black/50 to-transparent p-1">
               <form action={() => moveProductImage(productId, image.id, 'left', variantId)}>
                 <button
                   type="submit"
@@ -95,7 +95,7 @@ export function ImageManager({
               </form>
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-1 opacity-0 transition group-hover:opacity-100">
+            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent p-1.5">
               <button
                 type="button"
                 onClick={() => handleCortarClick(image)}

@@ -50,7 +50,7 @@ export function CampaignImageManager({
           <form action={() => removePreorderCampaignImage(campaignId, currentField)} className="absolute right-1 top-1">
             <button
               type="submit"
-              className="rounded-full bg-black/60 px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100"
+              className="rounded-full bg-black/60 px-2 py-1 text-xs text-white"
             >
               Remover
             </button>
