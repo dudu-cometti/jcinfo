@@ -34,7 +34,7 @@ export default async function AdminDashboardPage({
               href={buildRangeHref(option.value)}
               className={`rounded-md px-3 py-1.5 text-sm transition ${
                 metrics.range.key === option.value
-                  ? 'bg-neutral-900 text-white'
+                  ? 'bg-brand-navy text-white'
                   : 'text-neutral-600 hover:bg-neutral-100'
               }`}
             >

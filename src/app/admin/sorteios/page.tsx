@@ -20,13 +20,20 @@ export default async function AdminSorteiosPage() {
   const [{ data: raffles }, { data: rewards }, { data: campaigns }] = await Promise.all([
     supabase
       .from('raffles')
-      .select('id, name, raffle_date, status, reward:rewards(name)')
+      .select('id, name, raffle_date, status, reward:rewards(name), raffle_entries(count)')
       .order('raffle_date', { ascending: false }),
     supabase.from('rewards').select('id, name').order('name'),
     supabase.from('point_campaigns').select('id, name').order('name'),
   ])
 
-  type RaffleRow = { id: string; name: string; raffle_date: string; status: string; reward: { name: string } | null }
+  type RaffleRow = {
+    id: string
+    name: string
+    raffle_date: string
+    status: string
+    reward: { name: string } | null
+    raffle_entries: { count: number }[]
+  }
   const rows = (raffles ?? []) as unknown as RaffleRow[]
 
   return (
@@ -38,6 +45,7 @@ export default async function AdminSorteiosPage() {
             <Th>Nome</Th>
             <Th>Prêmio</Th>
             <Th>Data</Th>
+            <Th>Inscritos</Th>
             <Th>Status</Th>
             <Th />
           </Thead>
@@ -50,13 +58,24 @@ export default async function AdminSorteiosPage() {
                   <Td className="font-medium text-neutral-900">{raffle.name}</Td>
                   <Td>{raffle.reward?.name ?? '-'}</Td>
                   <Td className="text-xs text-neutral-500">{formatDateTime(raffle.raffle_date)}</Td>
+                  <Td>{raffle.raffle_entries?.[0]?.count ?? 0}</Td>
                   <Td>
                     <Badge tone={STATUS_TONE[raffle.status]}>{raffle.status}</Badge>
                   </Td>
                   <Td>
-                    <Link href={`/admin/sorteios/${raffle.id}`} className="text-sm text-neutral-600 hover:underline">
-                      Gerenciar
-                    </Link>
+                    <div className="flex items-center justify-end gap-3">
+                      <a
+                        href={`/sorteios#${raffle.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-neutral-600 hover:underline"
+                      >
+                        Ver página
+                      </a>
+                      <Link href={`/admin/sorteios/${raffle.id}`} className="text-sm text-neutral-600 hover:underline">
+                        Gerenciar
+                      </Link>
+                    </div>
                   </Td>
                 </Tr>
               ))

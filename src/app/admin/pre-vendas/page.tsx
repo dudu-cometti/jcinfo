@@ -57,9 +57,19 @@ export default async function AdminPreVendasPage() {
                     <Badge tone={STATUS_TONE[campaign.status]}>{campaign.status}</Badge>
                   </Td>
                   <Td>
-                    <Link href={`/admin/pre-vendas/${campaign.id}`} className="text-sm text-neutral-600 hover:underline">
-                      Gerenciar
-                    </Link>
+                    <div className="flex items-center justify-end gap-3">
+                      <a
+                        href={`/pre-venda/${campaign.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-neutral-600 hover:underline"
+                      >
+                        Ver página
+                      </a>
+                      <Link href={`/admin/pre-vendas/${campaign.id}`} className="text-sm text-neutral-600 hover:underline">
+                        Gerenciar
+                      </Link>
+                    </div>
                   </Td>
                 </Tr>
               ))

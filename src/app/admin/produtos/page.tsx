@@ -220,7 +220,7 @@ export default async function AdminProdutosPage({
             <Link
               key={p}
               href={`/admin/produtos?${new URLSearchParams({ q, status, marca: brandId, page: String(p) }).toString()}`}
-              className={`rounded-md px-3 py-1 ${p === page ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'}`}
+              className={`rounded-md px-3 py-1 ${p === page ? 'bg-brand-navy text-white' : 'text-neutral-600 hover:bg-neutral-100'}`}
             >
               {p}
             </Link>

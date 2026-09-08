@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/card'
 import { Table, Thead, Th, Tr, Td, EmptyState } from '@/components/ui/table'
+import { CopyLinkButton } from '@/components/ui/copy-link-button'
 import { formatDate, formatDateTime } from '@/lib/utils'
 import { PreorderCampaignForm } from '../PreorderCampaignForm'
 import { updatePreorderCampaign, deletePreorderCampaign } from '../actions'
@@ -46,6 +47,18 @@ export default async function EditPreorderCampaignPage({
               Excluir pré-venda
             </button>
           </form>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm">
+          <a
+            href={`/pre-venda/${campaign.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate font-medium text-brand-navy hover:underline"
+          >
+            Ver página pública
+          </a>
+          <CopyLinkButton path={`/pre-venda/${campaign.slug}`} />
         </div>
 
         <Card>

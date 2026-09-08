@@ -13,11 +13,18 @@ function isGroup(entry: NavEntry): entry is NavGroup {
 }
 
 function NavLink({ item, onNavigate }: { item: NavLeaf; onNavigate: () => void }) {
+  const pathname = usePathname()
+  const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
+
   return (
     <Link
       href={item.href}
       onClick={onNavigate}
-      className="rounded-lg px-3 py-2 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900"
+      className={`rounded-lg px-3 py-2 text-sm transition ${
+        isActive
+          ? 'bg-brand-navy/10 font-medium text-brand-navy'
+          : 'text-neutral-600 hover:bg-brand-navy/5 hover:text-brand-navy'
+      }`}
     >
       {item.label}
     </Link>
@@ -34,8 +41,8 @@ function NavGroupSection({ group, onNavigate }: { group: NavGroup; onNavigate: (
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-neutral-100 ${
-          isActive ? 'text-neutral-900' : 'text-neutral-500'
+        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-brand-navy/5 ${
+          isActive ? 'text-brand-navy' : 'text-neutral-500 hover:text-brand-navy'
         }`}
       >
         {group.label}
@@ -83,7 +90,7 @@ export function AppShell({
         }`}
       >
         <div className="mb-4 flex items-center justify-between px-2">
-          <span className="text-sm font-semibold text-neutral-900">{brandLabel}</span>
+          <span className="text-sm font-semibold text-brand-navy">{brandLabel}</span>
           <button
             type="button"
             onClick={() => setOpen(false)}
@@ -110,13 +117,13 @@ export function AppShell({
             className="flex flex-col gap-1 md:hidden"
             aria-label="Abrir menu"
           >
-            <span className="block h-0.5 w-5 bg-neutral-700" />
-            <span className="block h-0.5 w-5 bg-neutral-700" />
-            <span className="block h-0.5 w-5 bg-neutral-700" />
+            <span className="block h-0.5 w-5 bg-brand-navy" />
+            <span className="block h-0.5 w-5 bg-brand-navy" />
+            <span className="block h-0.5 w-5 bg-brand-navy" />
           </button>
           <span className="truncate text-sm text-neutral-500">{userLabel}</span>
           <form action={logoutAction}>
-            <button type="submit" className="shrink-0 text-sm text-neutral-500 hover:text-neutral-900">
+            <button type="submit" className="shrink-0 text-sm text-neutral-500 hover:text-brand-navy">
               Sair
             </button>
           </form>

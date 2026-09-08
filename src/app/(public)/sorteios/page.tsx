@@ -38,7 +38,7 @@ export default async function SorteiosPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {rows.map((raffle) => (
-            <div key={raffle.id} className="rounded-2xl border border-neutral-200 bg-white p-6">
+            <div id={raffle.id} key={raffle.id} className="scroll-mt-20 rounded-2xl border border-neutral-200 bg-white p-6">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
                 <Badge tone={raffle.status === 'aberto' ? 'blue' : 'neutral'}>{raffle.status}</Badge>
                 <span className="text-xs text-neutral-400">{formatDate(raffle.raffle_date)}</span>

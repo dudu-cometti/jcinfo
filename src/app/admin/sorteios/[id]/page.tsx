@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Table, Thead, Th, Tr, Td, EmptyState } from '@/components/ui/table'
+import { CopyLinkButton } from '@/components/ui/copy-link-button'
+import { createClient } from '@/lib/supabase/server'
 import { formatDateTime } from '@/lib/utils'
 import { RaffleForm } from '../RaffleForm'
 import { RaffleEntryForm } from './RaffleEntryForm'
@@ -19,7 +21,11 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
       supabase.from('raffles').select('*').eq('id', id).single(),
       supabase.from('rewards').select('id, name').order('name'),
       supabase.from('point_campaigns').select('id, name').order('name'),
-      supabase.from('raffle_entries').select('id, customer:customers(name, phone)').eq('raffle_id', id),
+      supabase
+        .from('raffle_entries')
+        .select('id, created_at, customer:customers(name, phone)')
+        .eq('raffle_id', id)
+        .order('created_at', { ascending: false }),
       supabase
         .from('raffle_winners')
         .select('id, drawn_at, notes, customer:customers(name, phone), drawn_by_profile:profiles(full_name)')
@@ -28,7 +34,7 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
 
   if (!raffle) notFound()
 
-  type EntryRow = { id: string; customer: { name: string; phone: string } | null }
+  type EntryRow = { id: string; created_at: string; customer: { name: string; phone: string } | null }
   const entryRows = (entries ?? []) as unknown as EntryRow[]
 
   type WinnerRow = {
@@ -40,12 +46,21 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
   }
   const winnerRows = (winners ?? []) as unknown as WinnerRow[]
 
+  const publicPath = `/sorteios#${raffle.id}`
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold text-neutral-900">{raffle.name}</h1>
           <Badge>{raffle.status}</Badge>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm">
+          <a href={publicPath} target="_blank" rel="noopener noreferrer" className="truncate font-medium text-brand-navy hover:underline">
+            Ver página pública
+          </a>
+          <CopyLinkButton path={publicPath} />
         </div>
 
         {winnerRows.length > 0 && (
@@ -75,15 +90,26 @@ export default async function RaffleDetailPage({ params }: PageProps<'/admin/sor
               <RaffleEntryForm raffleId={raffle.id} />
             </div>
           )}
-          {entryRows.length === 0 ? (
-            <p className="text-sm text-neutral-400">Nenhum participante ainda.</p>
-          ) : (
-            <ul className="flex flex-wrap gap-2">
-              {entryRows.map((entry) => (
-                <Badge key={entry.id}>{entry.customer?.name}</Badge>
-              ))}
-            </ul>
-          )}
+          <Table>
+            <Thead>
+              <Th>Nome</Th>
+              <Th>Telefone</Th>
+              <Th>Inscrito em</Th>
+            </Thead>
+            <tbody>
+              {entryRows.length === 0 ? (
+                <EmptyState message="Nenhum participante ainda." />
+              ) : (
+                entryRows.map((entry) => (
+                  <Tr key={entry.id}>
+                    <Td className="font-medium text-neutral-900">{entry.customer?.name}</Td>
+                    <Td>{entry.customer?.phone}</Td>
+                    <Td className="text-xs text-neutral-500">{formatDateTime(entry.created_at)}</Td>
+                  </Tr>
+                ))
+              )}
+            </tbody>
+          </Table>
         </Card>
       </div>
 

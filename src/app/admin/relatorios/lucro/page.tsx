@@ -39,7 +39,7 @@ export default async function RelatorioLucroPage({ searchParams }: PageProps<'/a
               key={option.value}
               href={`/admin/relatorios/lucro?range=${option.value}`}
               className={`rounded-md px-3 py-1.5 text-sm transition ${
-                key === option.value ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+                key === option.value ? 'bg-brand-navy text-white' : 'text-neutral-600 hover:bg-neutral-100'
               }`}
             >
               {option.label}
