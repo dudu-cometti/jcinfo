@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getSiteSettings } from '@/lib/data/settings'
+import { verifyCustomerSession } from '@/lib/auth/customer-dal'
 import { PublicNav } from '@/components/public/PublicNav'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettings()
+  const [settings, customerSession] = await Promise.all([getSiteSettings(), verifyCustomerSession()])
 
   return (
     <div className="flex min-h-screen flex-col bg-neutral-50">
@@ -13,7 +14,7 @@ export default async function PublicLayout({ children }: { children: React.React
           <Link href="/" className="flex items-center">
             <Image src="/logo.jpg" alt={settings.site_name} width={170} height={50} priority className="h-10 w-auto" />
           </Link>
-          <PublicNav />
+          <PublicNav customerName={customerSession?.name ?? null} />
         </div>
       </header>
 

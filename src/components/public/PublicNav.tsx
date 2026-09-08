@@ -10,17 +10,19 @@ const NAV_ITEMS = [
   { href: '/sorteios', label: 'Sorteios' },
 ]
 
-export function PublicNav() {
+export function PublicNav({ customerName }: { customerName: string | null }) {
   const [open, setOpen] = useState(false)
+  const accountHref = customerName ? '/cliente/dashboard' : '/cliente/login'
+  const accountLabel = customerName ? customerName.split(' ')[0] : 'Minha conta'
 
   return (
     <div className="relative">
       <div className="flex items-center gap-2 sm:hidden">
         <Link
-          href="/cliente/login"
-          className="rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
+          href={accountHref}
+          className="max-w-[7rem] truncate rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
         >
-          Minha conta
+          {accountLabel}
         </Link>
         <button
           type="button"
@@ -41,10 +43,10 @@ export function PublicNav() {
           </Link>
         ))}
         <Link
-          href="/cliente/login"
-          className="rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
+          href={accountHref}
+          className="max-w-[10rem] truncate rounded-lg border border-brand-navy/30 px-3 py-1.5 text-sm text-brand-navy hover:bg-brand-navy/5"
         >
-          Minha conta
+          {accountLabel}
         </Link>
       </nav>
 
