@@ -71,18 +71,29 @@ export function buildShareImageElement(snapshot: ShareImageSnapshot, logoSrc: st
           color: '#ffffff',
         }}
       >
+        {/* logo.jpg is a wide 1600x474 lockup, not a square icon — fixed
+            box + objectFit:contain keeps its real aspect ratio instead of
+            squishing it into a square. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logoSrc} width={64} height={64} style={{ borderRadius: 12 }} alt="" />
+        <img
+          src={logoSrc}
+          width={140}
+          height={42}
+          style={{ objectFit: 'contain', borderRadius: 6, background: '#ffffff', padding: 4 }}
+          alt=""
+        />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 28, fontWeight: 700 }}>Orçamento</div>
-          <div style={{ fontSize: 16, opacity: 0.9 }}>
+          <div style={{ display: 'flex', fontSize: 16, opacity: 0.9 }}>
             #{safeText(snapshot.orcamentoId, 8)} · {formatDate(snapshot.createdAt)}
           </div>
         </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', padding: '28px 40px', gap: 16 }}>
-        <div style={{ fontSize: 20, fontWeight: 600, color: '#171717' }}>Olá, {safeText(snapshot.customerFirstName, 40)}!</div>
+        <div style={{ display: 'flex', fontSize: 20, fontWeight: 600, color: '#171717' }}>
+          Olá, {safeText(snapshot.customerFirstName, 40)}!
+        </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {snapshot.items.slice(0, 8).map((item, index) => (
@@ -105,7 +116,7 @@ export function buildShareImageElement(snapshot: ShareImageSnapshot, logoSrc: st
               )}
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: '#171717' }}>{safeText(item.productName, 60)}</div>
-                <div style={{ fontSize: 13, color: '#737373' }}>
+                <div style={{ display: 'flex', fontSize: 13, color: '#737373' }}>
                   {item.variantColor ? `${safeText(item.variantColor, 30)} · ` : ''}
                   {item.quantity}x
                 </div>
@@ -125,16 +136,16 @@ export function buildShareImageElement(snapshot: ShareImageSnapshot, logoSrc: st
             <div style={{ fontSize: 24, fontWeight: 700, color: BRAND.navy }}>{brl(snapshot.finalValue)}</div>
           </div>
           {snapshot.installments > 1 ? (
-            <div style={{ fontSize: 14, color: '#525252' }}>
+            <div style={{ display: 'flex', fontSize: 14, color: '#525252' }}>
               {snapshot.installments - 1}x de {brl(snapshot.installmentValue ?? 0)} + 1x de {brl(snapshot.lastInstallmentValue ?? 0)}
             </div>
           ) : (
-            <div style={{ fontSize: 14, color: '#525252' }}>Pagamento único</div>
+            <div style={{ display: 'flex', fontSize: 14, color: '#525252' }}>Pagamento único</div>
           )}
         </div>
 
         {snapshot.expiresAt && (
-          <div style={{ fontSize: 13, color: '#a15c00' }}>Válido até {formatDate(snapshot.expiresAt)}</div>
+          <div style={{ display: 'flex', fontSize: 13, color: '#a15c00' }}>Válido até {formatDate(snapshot.expiresAt)}</div>
         )}
         {snapshot.warrantyText && <div style={{ fontSize: 12, color: '#737373' }}>{safeText(snapshot.warrantyText, 200)}</div>}
       </div>
@@ -152,7 +163,9 @@ export function buildShareImageElement(snapshot: ShareImageSnapshot, logoSrc: st
         }}
       >
         {snapshot.storeAddress && <div>{safeText(snapshot.storeAddress, 200)}</div>}
-        {snapshot.whatsappNumber && <div>WhatsApp: {safeText(snapshot.whatsappNumber, 20)}</div>}
+        {snapshot.whatsappNumber && (
+          <div style={{ display: 'flex' }}>WhatsApp: {safeText(snapshot.whatsappNumber, 20)}</div>
+        )}
       </div>
     </div>
   )
