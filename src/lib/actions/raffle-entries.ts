@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { leadSchema } from '@/lib/validations/lead'
+import { checkRaffleRateLimit, getClientIp } from '@/lib/security/rate-limit'
 
 export type RaffleSignupState = { error?: string; success?: boolean } | undefined
 
@@ -18,6 +19,11 @@ export async function createRaffleSignup(
   _prevState: RaffleSignupState,
   formData: FormData,
 ): Promise<RaffleSignupState> {
+  const ip = await getClientIp()
+  if (!(await checkRaffleRateLimit(ip))) {
+    return { error: 'Muitas tentativas. Tente novamente mais tarde.' }
+  }
+
   const validated = leadSchema.safeParse({
     name: formData.get('name'),
     phone: formData.get('phone'),

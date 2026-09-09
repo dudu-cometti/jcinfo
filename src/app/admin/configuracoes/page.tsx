@@ -18,7 +18,7 @@ export default async function AdminConfiguracoesPage() {
     <div className="grid max-w-3xl grid-cols-1 gap-6">
       <Card>
         <h1 className="mb-4 text-lg font-semibold text-neutral-900">Configurações gerais</h1>
-        <SettingsForm whatsappNumber={settings.whatsapp_number} siteName={settings.site_name} />
+        <SettingsForm settings={settings} />
       </Card>
 
       <Card>

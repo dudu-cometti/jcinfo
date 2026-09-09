@@ -7,6 +7,8 @@ const NAV_ITEMS = [
   { href: '/vendedor/produtos', label: 'Produtos' },
   { href: '/vendedor/clientes', label: 'Clientes' },
   { href: '/vendedor/vendas', label: 'Vendas' },
+  { href: '/vendedor/orcamentos', label: 'Orçamentos' },
+  { href: '/vendedor/taxas', label: 'Taxas' },
 ]
 
 export default async function VendedorLayout({ children }: { children: React.ReactNode }) {

@@ -23,7 +23,7 @@ export default async function BrandPage({ params }: PageProps<'/marca/[slug]'>) 
   if (!brand) notFound()
 
   const { data: rawProducts } = await supabase
-    .from('products')
+    .from('products_public_v')
     .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
     .eq('status', 'ativo')
     .eq('brand_id', brand.id)

@@ -18,7 +18,7 @@ export default async function VendedorProdutosPage({ searchParams }: PageProps<'
 
   const supabase = await createClient()
   let query = supabase
-    .from('products')
+    .from('products_public_v')
     .select('id, name, sku, model, price, promo_price, stock, status, category:categories(name), brand:brands(name)')
     .order('name')
     .limit(100)

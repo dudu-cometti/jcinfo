@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -51,7 +52,12 @@ export default async function AdminEstoquePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-neutral-900">Estoque</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-neutral-900">Estoque</h1>
+        <Link href="/admin/estoque/historico" className="text-sm font-medium text-brand-navy hover:underline">
+          Ver histórico completo com filtros →
+        </Link>
+      </div>
 
       {lowStock.length > 0 && (
         <Card className="border-red-200 bg-red-50">

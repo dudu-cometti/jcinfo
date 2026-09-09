@@ -23,7 +23,7 @@ export default async function CategoryPage({ params }: PageProps<'/categoria/[sl
   if (!category) notFound()
 
   const { data: rawProducts } = await supabase
-    .from('products')
+    .from('products_public_v')
     .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
     .eq('status', 'ativo')
     .eq('category_id', category.id)

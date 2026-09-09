@@ -56,10 +56,11 @@ export async function updateProduct(
 
   const supabase = await createClient()
 
-  // Novo products with color variants have their price/promo_price/stock
+  // Novo products with color variants have their price/promo_price
   // maintained by a DB trigger from the variants (sync_product_from_variants,
-  // migration 20260101000029) — writing the form's stale copies of those
+  // migration 20260101000029) — writing the form's stale copy of those
   // fields here would clobber that aggregate until the next variant edit.
+  // (stock is never in validated.data at all — it's not an editable field.)
   const updateData: Record<string, unknown> = { ...validated.data }
   if (validated.data.condition === 'novo') {
     const { count } = await supabase
@@ -69,7 +70,6 @@ export async function updateProduct(
     if ((count ?? 0) > 0) {
       delete updateData.price
       delete updateData.promo_price
-      delete updateData.stock
     }
   }
 

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { leadSchema } from '@/lib/validations/lead'
+import { checkPreorderRateLimit, getClientIp } from '@/lib/security/rate-limit'
 
 export type PreorderSignupState = { error?: string; success?: boolean } | undefined
 
@@ -18,6 +19,11 @@ export async function createPreorderSignup(
   _prevState: PreorderSignupState,
   formData: FormData,
 ): Promise<PreorderSignupState> {
+  const ip = await getClientIp()
+  if (!(await checkPreorderRateLimit(ip))) {
+    return { error: 'Muitas tentativas. Tente novamente mais tarde.' }
+  }
+
   const validated = leadSchema.safeParse({
     name: formData.get('name'),
     phone: formData.get('phone'),
@@ -27,6 +33,15 @@ export async function createPreorderSignup(
   }
 
   const admin = createAdminClient()
+
+  const { data: campaign } = await admin
+    .from('preorder_campaigns')
+    .select('status')
+    .eq('id', campaignId)
+    .maybeSingle()
+  if (!campaign || campaign.status !== 'aberta') {
+    return { error: 'Esta campanha não está mais disponível.' }
+  }
 
   const { data: existingCustomer } = await admin
     .from('customers')

@@ -11,12 +11,14 @@ const NAV_ITEMS: NavEntry[] = [
       { href: '/admin/categorias', label: 'Categorias' },
       { href: '/admin/marcas', label: 'Marcas' },
       { href: '/admin/estoque', label: 'Estoque' },
+      { href: '/admin/entradas', label: 'Entradas de estoque' },
     ],
   },
   {
     label: 'Vendas',
     items: [
       { href: '/admin/vendas', label: 'Vendas' },
+      { href: '/admin/orcamentos', label: 'Orçamentos' },
       { href: '/admin/clientes', label: 'Clientes' },
       { href: '/admin/comissoes', label: 'Comissões' },
     ],
@@ -40,6 +42,7 @@ const NAV_ITEMS: NavEntry[] = [
     label: 'Sistema',
     items: [
       { href: '/admin/relatorios', label: 'Relatórios' },
+      { href: '/admin/taxas', label: 'Taxas de cartão' },
       { href: '/admin/configuracoes', label: 'Configurações' },
       { href: '/admin/logs', label: 'Logs' },
     ],

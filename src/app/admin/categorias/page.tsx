@@ -10,10 +10,19 @@ export const metadata = { title: 'Categorias' }
 
 export default async function AdminCategoriasPage() {
   const supabase = await createClient()
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('id, name, slug, products(count)')
-    .order('name')
+
+  // `products(count)` exige SELECT de tabela sem qualificação de coluna,
+  // que products deixou de conceder a anon/authenticated (migration
+  // 20260101000047). A contagem por categoria vem de uma função
+  // SECURITY DEFINER própria.
+  const [{ data: categories }, { data: counts }] = await Promise.all([
+    supabase.from('categories').select('id, name, slug').order('name'),
+    supabase.rpc('admin_category_product_counts'),
+  ])
+
+  const countByCategory = new Map<string, number>(
+    (counts ?? []).map((c: { category_id: string; product_count: number }) => [c.category_id, c.product_count]),
+  )
 
   return (
     <div>
@@ -39,7 +48,7 @@ export default async function AdminCategoriasPage() {
               <Tr key={category.id}>
                 <Td className="font-medium text-neutral-900">{category.name}</Td>
                 <Td className="font-mono text-xs text-neutral-500">{category.slug}</Td>
-                <Td>{category.products?.[0]?.count ?? 0}</Td>
+                <Td>{countByCategory.get(category.id) ?? 0}</Td>
                 <Td>
                   <div className="flex items-center justify-end gap-3">
                     <Link

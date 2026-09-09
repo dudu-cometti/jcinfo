@@ -17,7 +17,7 @@ export default async function HomePage() {
         .eq('active', true)
         .order('position'),
       supabase
-        .from('products')
+        .from('products_public_v')
         .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)')
         .eq('status', 'ativo')
         .eq('featured', true)

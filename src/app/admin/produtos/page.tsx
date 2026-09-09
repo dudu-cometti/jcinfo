@@ -25,30 +25,21 @@ export default async function AdminProdutosPage({
 
   const supabase = await createClient()
 
-  let query = supabase
-    .from('products')
-    .select(
-      'id, name, slug, sku, price, promo_price, stock, min_stock, status, featured, category:categories(name), brand:brands(name)',
-      { count: 'exact' },
-    )
-    .order('created_at', { ascending: false })
-    .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
-
-  if (q) {
-    query = query.or(
-      `name.ilike.%${q}%,sku.ilike.%${q}%,model.ilike.%${q}%,internal_code.ilike.%${q}%`,
-    )
-  }
-  if (status === 'ativo' || status === 'inativo') {
-    query = query.eq('status', status)
-  }
-  if (brandId) {
-    query = query.eq('brand_id', brandId)
-  }
-  if (status === 'baixo_estoque') {
-    // stock <= min_stock can't be filtered server-side via PostgREST (two-column
-    // comparison), so this option is combined with client-side filtering below.
-  }
+  // Contagem/paginação exigem SELECT de tabela sem qualificação de coluna,
+  // que products deixou de conceder a anon/authenticated (migration
+  // 20260101000047) para fechar de vez o acesso a cost/internal_code. A
+  // listagem do admin passa a vir de uma função SECURITY DEFINER, que não
+  // depende de GRANT nenhum do chamador.
+  const [{ data, error }, { data: brands }] = await Promise.all([
+    supabase.rpc('admin_list_products', {
+      p_search: q || null,
+      p_status: status === 'ativo' || status === 'inativo' ? status : null,
+      p_brand_id: brandId || null,
+      p_limit: PAGE_SIZE,
+      p_offset: (page - 1) * PAGE_SIZE,
+    }),
+    supabase.from('brands').select('id, name').order('name'),
+  ])
 
   type ProductRow = {
     id: string
@@ -61,18 +52,16 @@ export default async function AdminProdutosPage({
     min_stock: number
     status: 'ativo' | 'inativo'
     featured: boolean
-    category: { name: string } | null
-    brand: { name: string } | null
+    category_name: string | null
+    brand_name: string | null
+    total_count: number
   }
 
-  const [{ data, count }, { data: brands }] = await Promise.all([
-    query,
-    supabase.from('brands').select('id, name').order('name'),
-  ])
-  const products = (data ?? []) as unknown as ProductRow[]
-  const visibleProducts = status === 'baixo_estoque' ? products.filter((p) => p.stock <= p.min_stock) : products
+  const rows = (error ? [] : (data as unknown as ProductRow[])) ?? []
+  const visibleProducts = status === 'baixo_estoque' ? rows.filter((p) => p.stock <= p.min_stock) : rows
+  const count = rows[0]?.total_count ?? 0
 
-  const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE))
 
   return (
     <div className="space-y-4">
@@ -171,8 +160,8 @@ export default async function AdminProdutosPage({
                       <div className="font-medium text-neutral-900">{product.name}</div>
                       {product.sku && <div className="text-xs text-neutral-400">SKU: {product.sku}</div>}
                     </Td>
-                    <Td>{product.category?.name ?? '-'}</Td>
-                    <Td>{product.brand?.name ?? '-'}</Td>
+                    <Td>{product.category_name ?? '-'}</Td>
+                    <Td>{product.brand_name ?? '-'}</Td>
                     <Td>
                       {product.promo_price ? (
                         <div>

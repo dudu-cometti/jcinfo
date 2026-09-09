@@ -13,9 +13,13 @@ export default async function EditProductPage({ params }: PageProps<'/admin/prod
   const { id } = await params
   const supabase = await createClient()
 
-  const [{ data: product }, { data: categories }, { data: brands }, { data: images }, { data: variants }] =
+  const [{ data: productRows }, { data: categories }, { data: brands }, { data: images }, { data: variants }] =
     await Promise.all([
-      supabase.from('products').select('*').eq('id', id).single(),
+      // products deixou de conceder SELECT(cost/internal_code) a
+      // anon/authenticated (migration 20260101000047) — a leitura completa
+      // do produto (inclusive cost) só existe via esta função
+      // SECURITY DEFINER, protegida por is_admin() internamente.
+      supabase.rpc('admin_get_product', { p_id: id }),
       supabase.from('categories').select('id, name').order('name'),
       supabase.from('brands').select('id, name').order('name'),
       supabase.from('product_images').select('id, url').eq('product_id', id).is('variant_id', null).order('position'),
@@ -26,6 +30,7 @@ export default async function EditProductPage({ params }: PageProps<'/admin/prod
         .order('position'),
     ])
 
+  const product = productRows?.[0]
   if (!product) notFound()
 
   type RawVariant = Omit<Variant, 'images'> & { images: { id: string; url: string; position: number }[] }

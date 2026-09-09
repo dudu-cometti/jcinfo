@@ -28,7 +28,7 @@ export async function getStockVelocity(): Promise<{ fastest: ProductVelocity[]; 
 
   const [{ data: products }, { data: movements }] = await Promise.all([
     supabase
-      .from('products')
+      .from('products_public_v')
       .select('id, name, sku, stock, created_at')
       .eq('status', 'ativo'),
     supabase

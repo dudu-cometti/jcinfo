@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { leadSchema, type LeadFormState } from '@/lib/validations/lead'
+import { checkLeadRateLimit, getClientIp } from '@/lib/security/rate-limit'
 
 /**
  * Public, unauthenticated entry point (clicking "Falar no WhatsApp" on the
@@ -16,6 +17,11 @@ export async function createLead(
   _prevState: LeadFormState,
   formData: FormData,
 ): Promise<LeadFormState> {
+  const ip = await getClientIp()
+  if (!(await checkLeadRateLimit(ip))) {
+    return { error: 'Muitas tentativas. Tente novamente mais tarde.' }
+  }
+
   const validated = leadSchema.safeParse({
     name: formData.get('name'),
     phone: formData.get('phone'),

@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient()
   const { data } = await supabase
-    .from('products')
+    .from('products_public_v')
     .select(
       'id, name, sku, model, price, promo_price, stock, condition, variants:product_variants(id, color_name, price, promo_price, stock, status)',
     )

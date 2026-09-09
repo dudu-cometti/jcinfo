@@ -16,7 +16,9 @@ export const productVariantSchema = z
     color_hex: optionalString,
     price: z.coerce.number({ error: 'Informe um preço válido.' }).min(0),
     promo_price: optionalPrice,
-    stock: z.coerce.number({ error: 'Informe um estoque válido.' }).int().min(0),
+    // stock não é editável aqui — só via "Entrada de estoque"
+    // (receive_stock) ou os outros movimentos SQL. Uma cor nova sempre
+    // nasce com stock = 0 (garantido pelo banco).
     sku: optionalString,
     status: z.enum(['ativo', 'inativo']),
   })
@@ -33,7 +35,6 @@ export function parseProductVariantFormData(formData: FormData) {
     color_hex: formData.get('color_hex'),
     price: formData.get('price'),
     promo_price: formData.get('promo_price'),
-    stock: formData.get('stock'),
     sku: formData.get('sku'),
     status: formData.get('status'),
   })

@@ -88,9 +88,9 @@ export async function getDashboardMetrics(
       .in('type', ['saida', 'estorno'])
       .gte('created_at', startIso)
       .lte('created_at', endIso),
-    supabase.from('products').select('stock, min_stock').eq('status', 'ativo'),
+    supabase.from('products_public_v').select('stock, min_stock').eq('status', 'ativo'),
     supabase
-      .from('products')
+      .from('products_public_v')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'ativo')
       .eq('featured', true),

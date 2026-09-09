@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState, useState } from 'react'
 import { Field, Input, Textarea, Select, Checkbox, Label } from '@/components/ui/input'
 import { CurrencyInput } from '@/components/ui/currency-input'
@@ -152,19 +153,18 @@ export function ProductForm({
         </Field>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Field label="Estoque" htmlFor="stock" hint={pricingLocked ? 'Controlado pelas cores cadastradas abaixo.' : undefined}>
-          <Input
-            id="stock"
-            name="stock"
-            type="number"
-            min="0"
-            required
-            readOnly={pricingLocked}
-            defaultValue={defaultValues?.stock ?? 0}
-            className={pricingLocked ? 'bg-neutral-50 text-neutral-400' : undefined}
-          />
-        </Field>
+      {defaultValues && (
+        <p className="rounded-lg bg-neutral-50 px-3 py-2 text-sm text-neutral-600">
+          Estoque atual: <span className="font-medium text-neutral-900">{defaultValues.stock}</span>
+          {' — '}
+          <Link href="/admin/entradas/nova" className="text-brand-navy hover:underline">
+            registrar entrada de estoque
+          </Link>
+          {' '}para alterar. Não é editável aqui.
+        </p>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Field label="Estoque mínimo" htmlFor="min_stock">
           <Input id="min_stock" name="min_stock" type="number" min="0" required defaultValue={defaultValues?.min_stock ?? 0} />
         </Field>

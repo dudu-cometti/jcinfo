@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState } from 'react'
 import { Field, Input, Select } from '@/components/ui/input'
 import { CurrencyInput } from '@/components/ui/currency-input'
@@ -50,13 +51,21 @@ export function VariantForm({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="Estoque" htmlFor="stock">
-          <Input id="stock" name="stock" type="number" min="0" required defaultValue={defaultValues?.stock ?? 0} />
-        </Field>
         <Field label="SKU" htmlFor="sku">
           <Input id="sku" name="sku" defaultValue={defaultValues?.sku ?? ''} />
         </Field>
       </div>
+
+      {defaultValues && (
+        <p className="rounded-lg bg-neutral-50 px-3 py-2 text-sm text-neutral-600">
+          Estoque atual: <span className="font-medium text-neutral-900">{defaultValues.stock}</span>
+          {' — '}
+          <Link href="/admin/entradas/nova" className="text-brand-navy hover:underline">
+            registrar entrada de estoque
+          </Link>
+          {' '}para alterar. Não é editável aqui.
+        </p>
+      )}
 
       <Field label="Status" htmlFor="status">
         <Select id="status" name="status" defaultValue={defaultValues?.status ?? 'ativo'}>

@@ -28,7 +28,7 @@ export default async function ProdutosPage({ searchParams }: PageProps<'/produto
     supabase.from('brands').select('id, name').order('name'),
     (async () => {
       let query = supabase
-        .from('products')
+        .from('products_public_v')
         .select('id, name, slug, price, promo_price, stock, images:product_images(url, position)', {
           count: 'exact',
         })

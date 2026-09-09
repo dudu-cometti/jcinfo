@@ -10,10 +10,19 @@ export const metadata = { title: 'Marcas' }
 
 export default async function AdminMarcasPage() {
   const supabase = await createClient()
-  const { data: brands } = await supabase
-    .from('brands')
-    .select('id, name, slug, products(count)')
-    .order('name')
+
+  // `products(count)` exige SELECT de tabela sem qualificação de coluna,
+  // que products deixou de conceder a anon/authenticated (migration
+  // 20260101000047). A contagem por marca vem de uma função
+  // SECURITY DEFINER própria.
+  const [{ data: brands }, { data: counts }] = await Promise.all([
+    supabase.from('brands').select('id, name, slug').order('name'),
+    supabase.rpc('admin_brand_product_counts'),
+  ])
+
+  const countByBrand = new Map<string, number>(
+    (counts ?? []).map((c: { brand_id: string; product_count: number }) => [c.brand_id, c.product_count]),
+  )
 
   return (
     <div>
@@ -39,7 +48,7 @@ export default async function AdminMarcasPage() {
               <Tr key={brand.id}>
                 <Td className="font-medium text-neutral-900">{brand.name}</Td>
                 <Td className="font-mono text-xs text-neutral-500">{brand.slug}</Td>
-                <Td>{brand.products?.[0]?.count ?? 0}</Td>
+                <Td>{countByBrand.get(brand.id) ?? 0}</Td>
                 <Td>
                   <div className="flex items-center justify-end gap-3">
                     <Link href={`/admin/marcas/${brand.id}`} className="text-sm text-neutral-600 hover:underline">

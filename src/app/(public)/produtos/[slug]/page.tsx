@@ -10,7 +10,7 @@ import { ProductCard, type ProductCardData } from '@/components/public/ProductCa
 async function getProduct(slug: string) {
   const supabase = await createClient()
   const { data: product } = await supabase
-    .from('products')
+    .from('products_public_v')
     .select(
       'id, name, slug, description, model, sku, price, promo_price, stock, min_stock, status, condition, category_id, brand_id, category:categories(name, slug), brand:brands(name, slug), images:product_images(url, position, variant_id), variants:product_variants(id, color_name, color_hex, price, promo_price, stock, status, position, images:product_images(url, position))',
     )
@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
       .eq('status', 'ativa'),
     product.category_id
       ? supabase
-          .from('products')
+          .from('products_public_v')
           .select(RELATED_SELECT)
           .eq('status', 'ativo')
           .eq('category_id', product.category_id)
@@ -76,7 +76,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
   let relatedRaw = sameCategory ?? []
   if (relatedRaw.length === 0 && product.brand_id) {
     const { data: sameBrand } = await supabase
-      .from('products')
+      .from('products_public_v')
       .select(RELATED_SELECT)
       .eq('status', 'ativo')
       .eq('brand_id', product.brand_id)

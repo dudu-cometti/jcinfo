@@ -11,7 +11,6 @@ const base = {
   price: '2000',
   promo_price: '',
   cost: '',
-  stock: '10',
   min_stock: '2',
   sku: '',
   internal_code: '',
@@ -40,7 +39,11 @@ describe('productSchema', () => {
     expect(productSchema.safeParse({ ...base, slug: 'iPhone 15' }).success).toBe(false)
   })
 
-  it('rejects negative stock', () => {
-    expect(productSchema.safeParse({ ...base, stock: '-1' }).success).toBe(false)
+  it('has no stock field at all — the form can never carry a stock value, even if one is smuggled into FormData', () => {
+    const result = productSchema.safeParse({ ...base, stock: '999' })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect('stock' in result.data).toBe(false)
+    }
   })
 })

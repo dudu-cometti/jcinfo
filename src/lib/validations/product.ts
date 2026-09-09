@@ -23,7 +23,11 @@ export const productSchema = z
     price: z.coerce.number({ error: 'Informe um preço válido.' }).min(0),
     promo_price: optionalNumber,
     cost: optionalNumber,
-    stock: z.coerce.number({ error: 'Informe um estoque válido.' }).int().min(0),
+    // stock é deliberadamente ausente daqui: não é editável pelo formulário
+    // de produto — a única via para mudar estoque é o fluxo de "Entrada de
+    // estoque" (receive_stock) ou os outros movimentos SQL (venda, ajuste,
+    // estorno). Um produto novo sempre nasce com stock = 0 (garantido pelo
+    // banco, ver migration 20260101000054).
     min_stock: z.coerce.number({ error: 'Informe um estoque mínimo válido.' }).int().min(0),
     sku: optionalString,
     internal_code: optionalString,
@@ -49,7 +53,6 @@ export function parseProductFormData(formData: FormData) {
     price: formData.get('price'),
     promo_price: formData.get('promo_price'),
     cost: formData.get('cost'),
-    stock: formData.get('stock'),
     min_stock: formData.get('min_stock'),
     sku: formData.get('sku'),
     internal_code: formData.get('internal_code'),
