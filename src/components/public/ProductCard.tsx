@@ -29,18 +29,18 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover transition group-hover:scale-105"
+            className="object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-neutral-400">Sem imagem</div>
         )}
         {discount && (
-          <span className="absolute left-2 top-2 rounded-full bg-red-600 px-2 py-1 text-xs font-semibold text-white">
+          <span className="absolute left-2 top-2 rounded-lg bg-brand-navy px-2 py-1 text-xs font-semibold text-brand-cyan">
             -{discount}%
           </span>
         )}
         {product.stock === 0 && (
-          <span className="absolute right-2 top-2 rounded-full bg-neutral-900/80 px-2 py-1 text-xs font-semibold text-white">
+          <span className="absolute right-2 top-2 rounded-lg bg-neutral-900/80 px-2 py-1 text-xs font-semibold text-white">
             Esgotado
           </span>
         )}

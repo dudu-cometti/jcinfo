@@ -71,16 +71,19 @@ export default async function HomePage() {
       <HeroCarousel banners={resolvedBanners} />
 
       {campaigns && campaigns.length > 0 && (
-        <section>
-          <h2 className="mb-4 text-xl font-semibold text-neutral-900">Campanhas de pontos ativas</h2>
+        <section className="rounded-3xl bg-gradient-to-br from-brand-navy to-brand-teal px-6 py-8 sm:px-10 sm:py-10">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-white">Campanhas de pontos</h2>
+            <p className="mt-1 text-sm text-white/60">Acumule pontos em cada compra e troque por prêmios</p>
+          </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {campaigns.map((campaign) => (
-              <div key={campaign.id} className="rounded-2xl border border-neutral-200 bg-white p-5">
-                <Badge className="bg-brand-cyan/15 text-brand-navy">
+              <div key={campaign.id} className="rounded-2xl bg-white/10 p-5 ring-1 ring-inset ring-white/15">
+                <span className="text-xs font-semibold tracking-wide text-brand-cyan">
                   {campaign.min_points.toLocaleString('pt-BR')} pontos
-                </Badge>
-                <h3 className="mt-2 font-medium text-neutral-900">{campaign.name}</h3>
-                <p className="mt-1 text-sm text-neutral-500">{campaign.description}</p>
+                </span>
+                <h3 className="mt-2 font-medium text-white">{campaign.name}</h3>
+                <p className="mt-1 text-sm text-white/60">{campaign.description}</p>
               </div>
             ))}
           </div>
@@ -89,8 +92,8 @@ export default async function HomePage() {
 
       {products.length > 0 && (
         <section>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold text-neutral-900">Produtos em destaque</h2>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-2xl font-semibold text-neutral-900">Produtos em destaque</h2>
             <Link href="/produtos" className="text-sm text-brand-navy hover:underline">
               Ver todos
             </Link>
@@ -105,13 +108,13 @@ export default async function HomePage() {
 
       {categories && categories.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-neutral-900">Categorias</h2>
+          <h2 className="mb-4 text-base font-semibold text-neutral-500">Categorias</h2>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/categoria/${category.slug}`}
-                className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/30 hover:bg-brand-navy/5 hover:text-brand-navy"
+                className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/40 hover:bg-brand-navy/5 hover:text-brand-navy"
               >
                 {category.name}
               </Link>
@@ -122,13 +125,13 @@ export default async function HomePage() {
 
       {brands && brands.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-neutral-900">Marcas</h2>
+          <h2 className="mb-4 text-base font-semibold text-neutral-500">Marcas</h2>
           <div className="flex flex-wrap gap-2">
             {brands.map((brand) => (
               <Link
                 key={brand.id}
                 href={`/marca/${brand.slug}`}
-                className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/30 hover:bg-brand-navy/5 hover:text-brand-navy"
+                className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-700 hover:border-brand-navy/40 hover:bg-brand-navy/5 hover:text-brand-navy"
               >
                 {brand.name}
               </Link>
