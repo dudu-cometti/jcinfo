@@ -14,7 +14,15 @@ export async function getClientIp(): Promise<string> {
  * that shape let the caller pick its own limits, which isn't a rate limit
  * at all. Only the IP is ever passed, never a limit/window.
  */
-async function callRateLimitRpc(fn: 'check_lead_rate_limit' | 'check_preorder_rate_limit' | 'check_raffle_rate_limit' | 'check_orcamento_image_rate_limit', ip: string): Promise<boolean> {
+async function callRateLimitRpc(
+  fn:
+    | 'check_lead_rate_limit'
+    | 'check_preorder_rate_limit'
+    | 'check_raffle_rate_limit'
+    | 'check_orcamento_image_rate_limit'
+    | 'check_simulator_rate_limit',
+  ip: string,
+): Promise<boolean> {
   const supabase = await createClient()
   const { data, error } = await supabase.rpc(fn, { p_ip: ip })
   if (error) return true
@@ -35,4 +43,8 @@ export function checkRaffleRateLimit(ip: string): Promise<boolean> {
 
 export function checkOrcamentoImageRateLimit(ip: string): Promise<boolean> {
   return callRateLimitRpc('check_orcamento_image_rate_limit', ip)
+}
+
+export function checkSimulatorRateLimit(ip: string): Promise<boolean> {
+  return callRateLimitRpc('check_simulator_rate_limit', ip)
 }

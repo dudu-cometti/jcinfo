@@ -929,6 +929,23 @@ export type Database = {
       delete_payment_machine: { Args: { p_machine_id: string }; Returns: void }
       delete_payment_rate_rule: { Args: { p_rule_id: string }; Returns: void }
       reverse_stock_receipt: { Args: { p_receipt_id: string; p_reason: string }; Returns: void }
+      simulator_installment_bounds: {
+        Args: Record<string, never>
+        Returns: { min_installments: number; max_installments: number }[]
+      }
+      simulate_card_fee: {
+        Args: { p_value: number; p_installments: number }
+        Returns: {
+          machine_name: string
+          installments: number
+          percentage_applied: number
+          fixed_value_applied: number
+          final_value: number
+          installment_value: number
+          last_installment_value: number
+        }[]
+      }
+      check_simulator_rate_limit: { Args: { p_ip: string }; Returns: boolean }
     }
     Enums: {
       user_role: 'admin' | 'vendedor'
