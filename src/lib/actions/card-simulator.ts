@@ -73,3 +73,10 @@ export async function getSimulatorInstallmentBounds(): Promise<{ min: number; ma
   const row = data?.[0]
   return { min: row?.min_installments ?? 1, max: row?.max_installments ?? 12 }
 }
+
+/** Only brands that actually have an active rate rule — never free text, so a case/typo mismatch can't happen. */
+export async function getSimulatorBrands(): Promise<string[]> {
+  const supabase = await createClient()
+  const { data } = await supabase.rpc('simulator_available_brands')
+  return (data ?? []).map((row: { card_brand: string }) => row.card_brand)
+}

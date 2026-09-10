@@ -2,13 +2,21 @@
 
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
-import { Field, Select, Input } from '@/components/ui/input'
+import { Field, Select } from '@/components/ui/input'
 import { CurrencyInput } from '@/components/ui/currency-input'
 import { Button } from '@/components/ui/button'
 import { formatBRL } from '@/lib/utils'
 import { simulateCardFee, type SimulateCardFeeState } from '@/lib/actions/card-simulator'
 
-export function CardSimulator({ minInstallments, maxInstallments }: { minInstallments: number; maxInstallments: number }) {
+export function CardSimulator({
+  minInstallments,
+  maxInstallments,
+  brands,
+}: {
+  minInstallments: number
+  maxInstallments: number
+  brands: string[]
+}) {
   const [value, setValue] = useState(0)
   const [installments, setInstallments] = useState(minInstallments)
   const [cardBrand, setCardBrand] = useState('')
@@ -60,14 +68,18 @@ export function CardSimulator({ minInstallments, maxInstallments }: { minInstall
           </Select>
         </Field>
 
-        <Field label="Bandeira" htmlFor="sim-brand" hint="Opcional — deixe em branco se não souber">
-          <Input
-            id="sim-brand"
-            placeholder="Visa, Master, Elo..."
-            value={cardBrand}
-            onChange={(e) => setCardBrand(e.target.value)}
-          />
-        </Field>
+        {brands.length > 0 && (
+          <Field label="Bandeira" htmlFor="sim-brand" hint="Opcional">
+            <Select id="sim-brand" value={cardBrand} onChange={(e) => setCardBrand(e.target.value)}>
+              <option value="">Qualquer bandeira</option>
+              {brands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
 
         <Button className="w-full" disabled={isPending} onClick={handleCalculate}>
           {isPending ? 'Calculando...' : 'Calcular'}

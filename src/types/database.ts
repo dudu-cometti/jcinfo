@@ -947,6 +947,7 @@ export type Database = {
         }[]
       }
       check_simulator_rate_limit: { Args: { p_ip: string }; Returns: boolean }
+      simulator_available_brands: { Args: Record<string, never>; Returns: { card_brand: string }[] }
     }
     Enums: {
       user_role: 'admin' | 'vendedor'
