@@ -69,17 +69,19 @@ export function CardSimulator({ minInstallments, maxInstallments }: { minInstall
 
         {result && !('error' in result) && (
           <div className="space-y-1 rounded-xl bg-brand-navy/5 p-4 text-center">
-            <p className="text-xs text-neutral-500">Valor total no cartão</p>
-            <p className="text-2xl font-semibold text-brand-navy">{formatBRL(result.finalValue)}</p>
             {result.installments > 1 ? (
-              <p className="text-sm text-neutral-600">
-                {result.installments - 1}x de {formatBRL(result.installmentValue)} + 1x de{' '}
-                {formatBRL(result.lastInstallmentValue)}
-              </p>
+              <>
+                <p className="text-xs text-neutral-500">Valor parcelado</p>
+                <p className="text-2xl font-semibold text-brand-navy">
+                  {result.installments}x de {formatBRL(result.installmentValue)}
+                </p>
+              </>
             ) : (
-              <p className="text-sm text-neutral-600">à vista no cartão</p>
+              <>
+                <p className="text-xs text-neutral-500">Valor no cartão</p>
+                <p className="text-2xl font-semibold text-brand-navy">{formatBRL(result.finalValue)}</p>
+              </>
             )}
-            <p className="text-xs text-neutral-400">Taxa aplicada: {result.percentageApplied.toFixed(2)}%</p>
           </div>
         )}
       </div>

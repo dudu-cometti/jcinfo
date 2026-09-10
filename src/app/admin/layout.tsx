@@ -21,6 +21,7 @@ const NAV_ITEMS: NavEntry[] = [
       { href: '/admin/orcamentos', label: 'Orçamentos' },
       { href: '/admin/clientes', label: 'Clientes' },
       { href: '/admin/comissoes', label: 'Comissões' },
+      { href: '/simulador', label: 'Simulador', external: true },
     ],
   },
   {

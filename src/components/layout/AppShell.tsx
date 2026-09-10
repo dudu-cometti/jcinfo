@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export type NavLeaf = { href: string; label: string }
+export type NavLeaf = { href: string; label: string; external?: boolean }
 export type NavGroup = { label: string; items: NavLeaf[] }
 export type NavEntry = NavLeaf | NavGroup
 
@@ -15,17 +15,25 @@ function isGroup(entry: NavEntry): entry is NavGroup {
 function NavLink({ item, onNavigate }: { item: NavLeaf; onNavigate: () => void }) {
   const pathname = usePathname()
   const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
+  const className = `rounded-lg px-3 py-2 text-sm transition ${
+    isActive
+      ? 'bg-brand-navy/10 font-medium text-brand-navy'
+      : 'text-neutral-600 hover:bg-brand-navy/5 hover:text-brand-navy'
+  }`
+
+  // /simulador (and anything else marked external) is a standalone public
+  // page with no shell of its own — open it in a new tab so staff don't
+  // lose whatever they were doing in the admin/vendedor panel.
+  if (item.external) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+        {item.label}
+      </a>
+    )
+  }
 
   return (
-    <Link
-      href={item.href}
-      onClick={onNavigate}
-      className={`rounded-lg px-3 py-2 text-sm transition ${
-        isActive
-          ? 'bg-brand-navy/10 font-medium text-brand-navy'
-          : 'text-neutral-600 hover:bg-brand-navy/5 hover:text-brand-navy'
-      }`}
-    >
+    <Link href={item.href} onClick={onNavigate} className={className}>
       {item.label}
     </Link>
   )

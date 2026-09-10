@@ -9,6 +9,7 @@ const BASE_NAV_ITEMS: NavEntry[] = [
   { href: '/vendedor/vendas', label: 'Vendas' },
   { href: '/vendedor/orcamentos', label: 'Orçamentos' },
   { href: '/vendedor/taxas', label: 'Taxas' },
+  { href: '/simulador', label: 'Simulador', external: true },
 ]
 
 export default async function VendedorLayout({ children }: { children: React.ReactNode }) {
