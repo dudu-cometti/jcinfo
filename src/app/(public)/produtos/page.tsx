@@ -7,6 +7,7 @@ import { ProductCard, type ProductCardData } from '@/components/public/ProductCa
 export const metadata: Metadata = {
   title: 'Produtos',
   description: 'Celulares, notebooks, drones e acessórios com os melhores preços.',
+  alternates: { canonical: '/produtos' },
 }
 
 const PAGE_SIZE = 24

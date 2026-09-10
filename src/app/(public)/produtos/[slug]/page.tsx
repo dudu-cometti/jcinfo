@@ -34,11 +34,15 @@ export async function generateMetadata({ params }: PageProps<'/produtos/[slug]'>
   return {
     title: product.name,
     description: product.description ?? `${product.name} - confira preço, estoque e fotos.`,
+    alternates: {
+      canonical: `/produtos/${product.slug}`,
+    },
     openGraph: {
       title: product.name,
       description: product.description ?? undefined,
       images: image ? [{ url: image }] : undefined,
       type: 'website',
+      url: `/produtos/${product.slug}`,
     },
   }
 }
@@ -137,24 +141,49 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
 
   const jsonLdImages = variants.length > 0 ? variants.flatMap((v) => v.images.map((i) => i.url)) : baseImages.map((i) => i.url)
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const productUrl = `${siteUrl}/produtos/${product.slug}`
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description ?? undefined,
+    sku: product.sku ?? undefined,
+    url: productUrl,
     brand: brand ? { '@type': 'Brand', name: brand.name } : undefined,
     image: jsonLdImages,
     offers: {
       '@type': 'Offer',
+      url: productUrl,
       priceCurrency: 'BRL',
       price: product.promo_price ?? product.price,
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },
   }
 
+  const breadcrumbItems = [
+    { name: 'Início', url: siteUrl },
+    { name: 'Produtos', url: `${siteUrl}/produtos` },
+    ...(category ? [{ name: category.name, url: `${siteUrl}/categoria/${category.slug}` }] : []),
+    { name: product.name, url: productUrl },
+  ]
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  }
+
   return (
     <div className="space-y-12 pb-24 lg:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       <nav className="text-sm text-neutral-500">
         <Link href="/" className="hover:underline">

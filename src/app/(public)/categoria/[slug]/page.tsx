@@ -12,6 +12,13 @@ export async function generateMetadata({ params }: PageProps<'/categoria/[slug]'
   return {
     title: category.name,
     description: `Confira nossos produtos de ${category.name}.`,
+    alternates: { canonical: `/categoria/${slug}` },
+    openGraph: {
+      title: category.name,
+      description: `Confira nossos produtos de ${category.name}.`,
+      type: 'website',
+      url: `/categoria/${slug}`,
+    },
   }
 }
 

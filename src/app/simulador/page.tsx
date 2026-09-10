@@ -1,7 +1,10 @@
 import { getSimulatorInstallmentBounds, getSimulatorBrands } from '@/lib/actions/card-simulator'
 import { CardSimulator } from './CardSimulator'
 
-export const metadata = { title: 'Simulador de parcelamento' }
+export const metadata = {
+  title: 'Simulador de parcelamento',
+  robots: { index: false, follow: false },
+}
 
 export default async function SimuladorPage() {
   const [bounds, brands] = await Promise.all([getSimulatorInstallmentBounds(), getSimulatorBrands()])

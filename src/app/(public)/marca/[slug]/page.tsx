@@ -12,6 +12,13 @@ export async function generateMetadata({ params }: PageProps<'/marca/[slug]'>): 
   return {
     title: brand.name,
     description: `Confira nossos produtos da marca ${brand.name}.`,
+    alternates: { canonical: `/marca/${slug}` },
+    openGraph: {
+      title: brand.name,
+      description: `Confira nossos produtos da marca ${brand.name}.`,
+      type: 'website',
+      url: `/marca/${slug}`,
+    },
   }
 }
 
