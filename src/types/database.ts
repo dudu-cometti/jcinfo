@@ -934,10 +934,11 @@ export type Database = {
         Returns: { min_installments: number; max_installments: number }[]
       }
       simulate_card_fee: {
-        Args: { p_value: number; p_installments: number }
+        Args: { p_value: number; p_installments: number; p_card_brand?: string | null }
         Returns: {
           machine_name: string
           installments: number
+          card_brand_applied: string | null
           percentage_applied: number
           fixed_value_applied: number
           final_value: number

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
-import { Field, Select } from '@/components/ui/input'
+import { Field, Select, Input } from '@/components/ui/input'
 import { CurrencyInput } from '@/components/ui/currency-input'
 import { Button } from '@/components/ui/button'
 import { formatBRL } from '@/lib/utils'
@@ -11,6 +11,7 @@ import { simulateCardFee, type SimulateCardFeeState } from '@/lib/actions/card-s
 export function CardSimulator({ minInstallments, maxInstallments }: { minInstallments: number; maxInstallments: number }) {
   const [value, setValue] = useState(0)
   const [installments, setInstallments] = useState(minInstallments)
+  const [cardBrand, setCardBrand] = useState('')
   const [result, setResult] = useState<SimulateCardFeeState | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -20,7 +21,7 @@ export function CardSimulator({ minInstallments, maxInstallments }: { minInstall
       return
     }
     startTransition(async () => {
-      const state = await simulateCardFee(value, installments)
+      const state = await simulateCardFee(value, installments, cardBrand || null)
       setResult(state)
     })
   }
@@ -57,6 +58,15 @@ export function CardSimulator({ minInstallments, maxInstallments }: { minInstall
               </option>
             ))}
           </Select>
+        </Field>
+
+        <Field label="Bandeira" htmlFor="sim-brand" hint="Opcional — deixe em branco se não souber">
+          <Input
+            id="sim-brand"
+            placeholder="Visa, Master, Elo..."
+            value={cardBrand}
+            onChange={(e) => setCardBrand(e.target.value)}
+          />
         </Field>
 
         <Button className="w-full" disabled={isPending} onClick={handleCalculate}>

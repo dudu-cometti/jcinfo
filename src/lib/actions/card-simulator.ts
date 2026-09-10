@@ -8,6 +8,7 @@ export type SimulateCardFeeState =
   | {
       machineName: string
       installments: number
+      cardBrandApplied: string | null
       percentageApplied: number
       fixedValueApplied: number
       finalValue: number
@@ -18,11 +19,17 @@ export type SimulateCardFeeState =
 /**
  * Deliberately public — no requireRole here, this is the one page in the
  * app that must work with no login. The actual calculation (which machine
- * covers this installment count, which rate rule applies) happens entirely
- * inside simulate_card_fee() (SECURITY DEFINER); this action never reads or
- * trusts a fee/total from the client, only value + installment count.
+ * covers this installment count, which rate rule applies — brand-specific
+ * preferred, falling back to the generic "qualquer bandeira" rule, same as
+ * create_orcamento) happens entirely inside simulate_card_fee() (SECURITY
+ * DEFINER); this action never reads or trusts a fee/total from the client,
+ * only value + installment count + (optional) brand.
  */
-export async function simulateCardFee(value: number, installments: number): Promise<SimulateCardFeeState> {
+export async function simulateCardFee(
+  value: number,
+  installments: number,
+  cardBrand?: string | null,
+): Promise<SimulateCardFeeState> {
   const ip = await getClientIp()
   if (!(await checkSimulatorRateLimit(ip))) {
     return { error: 'Muitas tentativas. Tente novamente em instantes.' }
@@ -36,6 +43,7 @@ export async function simulateCardFee(value: number, installments: number): Prom
   const { data, error } = await supabase.rpc('simulate_card_fee', {
     p_value: value,
     p_installments: installments,
+    p_card_brand: cardBrand || null,
   })
 
   if (error || !data?.[0]) {
@@ -50,6 +58,7 @@ export async function simulateCardFee(value: number, installments: number): Prom
   return {
     machineName: row.machine_name,
     installments: row.installments,
+    cardBrandApplied: row.card_brand_applied,
     percentageApplied: row.percentage_applied,
     fixedValueApplied: row.fixed_value_applied,
     finalValue: row.final_value,
