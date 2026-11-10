@@ -68,7 +68,17 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16">
-      <HeroCarousel banners={resolvedBanners} />
+      <div className="space-y-4">
+        <HeroCarousel banners={resolvedBanners} />
+        <div>
+          <h1 className="text-xl font-semibold text-neutral-900 sm:text-2xl">
+            iPhone novo e seminovo e produtos Apple em Colatina - ES
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Garantia de 1 ano, Pix ou até 18x no cartão e entrega em mãos em Colatina e região.
+          </p>
+        </div>
+      </div>
 
       {campaigns && campaigns.length > 0 && (
         <section className="rounded-3xl bg-gradient-to-br from-brand-navy to-brand-teal px-6 py-8 sm:px-10 sm:py-10">

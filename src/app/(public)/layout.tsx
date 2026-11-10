@@ -3,6 +3,14 @@ import Image from 'next/image'
 import { getSiteSettings } from '@/lib/data/settings'
 import { verifyCustomerSession } from '@/lib/auth/customer-dal'
 import { PublicNav } from '@/components/public/PublicNav'
+import {
+  BUSINESS_CITY,
+  BUSINESS_STATE,
+  GOOGLE_MAPS_URL,
+  GOOGLE_REVIEW_URL,
+  OPENING_HOURS,
+  SERVICE_AREA,
+} from '@/lib/business'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const [settings, customerSession] = await Promise.all([getSiteSettings(), verifyCustomerSession()])
@@ -22,6 +30,18 @@ export default async function PublicLayout({ children }: { children: React.React
 
       <footer className="border-t border-neutral-200 bg-white py-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 text-sm text-neutral-500">
+          <p className="text-neutral-700">
+            {settings.site_name} · {BUSINESS_CITY} - {BUSINESS_STATE} · Entrega em mãos em {SERVICE_AREA.join(', ')} e
+            região · {OPENING_HOURS.label}
+          </p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener" className="text-brand-navy underline hover:text-brand-teal">
+              Ver no Google Maps
+            </a>
+            <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noopener" className="text-brand-navy underline hover:text-brand-teal">
+              Avalie a {settings.site_name} no Google
+            </a>
+          </p>
           <p>
             © {new Date().getFullYear()} {settings.site_name}. Todos os direitos reservados.
           </p>

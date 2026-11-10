@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getSiteSettings } from '@/lib/data/settings'
+import { SITE_URL } from '@/lib/site-url'
 import { verifyCustomerSession } from '@/lib/auth/customer-dal'
 import { ProductVariantSection } from '@/components/public/ProductVariantSection'
 import { ProductCard, type ProductCardData } from '@/components/public/ProductCard'
@@ -141,7 +142,7 @@ export default async function ProductPage({ params }: PageProps<'/produtos/[slug
 
   const jsonLdImages = variants.length > 0 ? variants.flatMap((v) => v.images.map((i) => i.url)) : baseImages.map((i) => i.url)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const siteUrl = SITE_URL
   const productUrl = `${siteUrl}/produtos/${product.slug}`
 
   const jsonLd = {

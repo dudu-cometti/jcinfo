@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import {
+  BUSINESS_CITY,
+  BUSINESS_PHONE,
+  BUSINESS_POSTAL_CODE,
+  BUSINESS_STATE,
+  GOOGLE_MAPS_URL,
+  OPENING_HOURS,
+  SERVICE_AREA,
+} from "@/lib/business";
+import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,16 +24,16 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "JC Info";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} - Celulares, notebooks e eletrônicos`,
+    default: `${siteName} - iPhone, Apple e eletrônicos em Colatina - ES`,
     template: `%s | ${siteName}`,
   },
   description:
-    "Celulares, iPhones, Xiaomi, notebooks, drones e acessórios com os melhores preços. Compre e acumule pontos.",
+    "iPhone novo e seminovo, Apple Watch, acessórios Apple, drones DJI e ar-condicionado em Colatina - ES. Garantia de 1 ano, até 18x no cartão e entrega em mãos na região. Compre e acumule pontos.",
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -31,12 +41,35 @@ export const metadata: Metadata = {
   },
 };
 
-const organizationJsonLd = {
+// MobilePhoneStore é um subtipo de LocalBusiness: liga o site ao Perfil da Empresa
+// (via sameAs/hasMap) e repete os mesmos dados de NAP, área e horário do perfil.
+const localBusinessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": "MobilePhoneStore",
+  "@id": `${siteUrl}/#business`,
   name: siteName,
   url: siteUrl,
   logo: `${siteUrl}/logo.jpg`,
+  image: `${siteUrl}/logo.jpg`,
+  telephone: BUSINESS_PHONE,
+  priceRange: "$$",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: BUSINESS_CITY,
+    addressRegion: BUSINESS_STATE,
+    postalCode: BUSINESS_POSTAL_CODE,
+    addressCountry: "BR",
+  },
+  areaServed: SERVICE_AREA.map((name) => ({ "@type": "City", name })),
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: OPENING_HOURS.days,
+    opens: OPENING_HOURS.opens,
+    closes: OPENING_HOURS.closes,
+  },
+  paymentAccepted: "Pix, Dinheiro, Cartão de crédito, Cartão de débito",
+  hasMap: GOOGLE_MAPS_URL,
+  sameAs: [GOOGLE_MAPS_URL],
 };
 
 const websiteJsonLd = {
@@ -60,7 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
         />
         <script
           type="application/ld+json"
